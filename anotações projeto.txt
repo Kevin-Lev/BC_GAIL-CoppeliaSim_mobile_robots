@@ -1,0 +1,7 @@
+pares estado-ação
+
+estado: posição, orientação e 360 feixes de sensor
+
+ação: velocidade de cada roda. mais alguma? roll? pitch?
+
+usar o sensor laser de distanciamento para representar o espaço 3D?

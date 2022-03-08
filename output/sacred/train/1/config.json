@@ -1,0 +1,46 @@
+{
+  "__doc__": "Quick alias for algorithm=gail",
+  "algorithm": "gail",
+  "algorithm_kwargs": {
+    "airl": {},
+    "gail": {},
+    "shared": {
+      "expert_batch_size": 1,
+      "gen_replay_buffer_capacity": 2,
+      "n_disc_updates_per_round": 4
+    }
+  },
+  "checkpoint_interval": 0,
+  "data_dir": "data/",
+  "discrim_net_kwargs": {
+    "airl": {},
+    "gail": {
+      "scale": false
+    },
+    "shared": {}
+  },
+  "env_name": "CartPole-v1",
+  "gen_batch_size": 2,
+  "init_rl_kwargs": {
+    "batch_size": 2,
+    "ent_coef": 0.0,
+    "learning_rate": 0.0003,
+    "n_epochs": 10,
+    "n_steps": 1,
+    "policy_class": {
+      "py/type": "imitation.policies.base.FeedForward32Policy"
+    }
+  },
+  "init_tensorboard": false,
+  "log_dir": "output/train_adversarial/CartPole-v1/20220214_233058_ed64ac",
+  "log_root": "output/train_adversarial",
+  "max_episode_steps": 5,
+  "n_episodes_eval": 1,
+  "n_expert_demos": 1,
+  "num_vec": 2,
+  "parallel": false,
+  "rollout_hint": "cartpole",
+  "rollout_path": "quickstart/rollouts/final.pkl",
+  "seed": 686096460,
+  "total_timesteps": 5
+}

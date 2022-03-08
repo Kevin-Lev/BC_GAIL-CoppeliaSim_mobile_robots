@@ -1,4 +1,5 @@
-from file import readSimulationData
+from file import readDataImitation, readSimulationData
 import sys
 
-readSimulationData(sys.argv[1])
+# readSimulationData(sys.argv[1])
+readDataImitation(sys.argv[1])
