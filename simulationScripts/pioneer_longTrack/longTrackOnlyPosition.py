@@ -2,8 +2,10 @@ from datetime import datetime
 from time import sleep
 import sys
 from zmqRemoteApi import RemoteAPIClient
+
+sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
+
 from simulationScripts.file import writeSimulationData
-from simulationScripts.sensorData import getSensorData
 
 client = RemoteAPIClient('localhost',23000)
 
@@ -36,28 +38,19 @@ for i in range(qnt_simulacoes):
     now = datetime.now()
     today_date = str(now.day) + '_' + str(now.month) + '_' + str(now.year)
 
-    fileDirectory = 'simulationData/pioneerLongTrack/training/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
+    fileDirectory = 'simulationData/pioneerLongTrack/onlyPosition/training/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
 
     sim.startSimulation() #Executa a simulação
 
     print('Simulação iniciada!')
 
-    # laserHandle=sim.getObjectHandle("LaserScannerLaser_2D")
-    # r = sim.handleProximitySensor(laserHandle)
-
-    # print(r)
 
     # handles iniciais
     pioneer_handle = sim.getObjectHandle('Pioneer_p3dx')
     left_motor_handle = sim.getObjectHandle('Pioneer_p3dx_leftMotor')
     right_motor_handle = sim.getObjectHandle('Pioneer_p3dx_rightMotor')
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    convOrientation = sim.alphaBetaGammaToYawPitchRoll(orientation[0], orientation[1], -orientation[2])
-    print('orientation')
-    print(orientation)
-    print('convOrientation')
-    print(convOrientation)
-    # laserHandle= sim.getObjectHandle("LaserScannerLaser_2D")
+    laserHandle= sim.getObjectHandle("LaserScannerLaser_2D")
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     pos_x = positions[0]
@@ -72,14 +65,9 @@ for i in range(qnt_simulacoes):
 
     # Registra posição, orientação e velocidade das rodas no início
     initial_position = positions
-    initial_orientation = orientation
     initial_joint_speed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, initial_position, initial_orientation, initial_joint_speed)
-
-    # while pos_x == 0:
-    #     positions = sim.getObjectPosition(pioneer_handle, -1)
-    #     pos_x = positions[0]
+    writeSimulationData(fileDirectory, initial_position, None, initial_joint_speed, None)
 
     xInt = int(pos_x)
 
@@ -88,15 +76,14 @@ for i in range(qnt_simulacoes):
         positions = sim.getObjectPosition(pioneer_handle, -1)
         pos_x = positions[0]
         
-        # Cada metro do eixo X percorrido é um checkpoint para se pegar dados da posição, orientação e sensor atuais
+        # Cada metro do eixo X percorrido é um checkpoint para se pegar dados da posição e orientação atuais
         if int(pos_x) <= xInt - 1:
             xInt = int(pos_x)
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(xInt + 1) + ' y: ' + str(positions[1])
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
             print(checkInfo)
-            # sensorResult = getSensorData("pointsConverted")
             
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+            writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
             print('\n')
 
 
@@ -105,15 +92,13 @@ for i in range(qnt_simulacoes):
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
     print(positions[0])
     print(positions[1])
-    print(orientation[2])
     sim.setJointTargetVelocity(left_motor_handle, 1.0)
     sim.setJointTargetVelocity(right_motor_handle, 0.5)
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+    writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
 
     y = positions[1]
-    # print(orientation)
     gamma_angle = orientation[2]
 
     if gamma_angle > 0:
@@ -137,16 +122,13 @@ for i in range(qnt_simulacoes):
 
     print('acabou tempo')
 
-
-
     positions = sim.getObjectPosition(pioneer_handle, -1)
     pos_y = positions[1]
-    orientation = sim.getObjectOrientation(pioneer_handle, -1)
     sim.setJointTargetVelocity(left_motor_handle, 2.0)
     sim.setJointTargetVelocity(right_motor_handle, 2.0)
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+    writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
 
 
     yInt = int(pos_y)
@@ -159,8 +141,8 @@ for i in range(qnt_simulacoes):
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(positions[0]) + ' y: ' + str(yInt - 1)
             print(checkInfo)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
-            # sensorResult = getSensorData("pointsConverted")
-            writeSimulationData(fileDirectory, positions, orientation, jointsSpeed)
+
+            writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
             print('\n')
 
 
@@ -170,7 +152,7 @@ for i in range(qnt_simulacoes):
     sim.setJointTargetVelocity(right_motor_handle, 0.5)
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+    writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
 
     pos_x = positions[0]
     pos_y = positions[1]
@@ -184,12 +166,11 @@ for i in range(qnt_simulacoes):
     print('acabou2')
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
-    orientation = sim.getObjectOrientation(pioneer_handle, -1)
     sim.setJointTargetVelocity(left_motor_handle, 1.0)
     sim.setJointTargetVelocity(right_motor_handle, 1.0)
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+    writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
 
     while pos_x < 5:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -200,8 +181,8 @@ for i in range(qnt_simulacoes):
                 str(xInt - 1) + ' y: ' + str(positions[1])
             print(checkInfo)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
-            #    sensorResult = getSensorData("pointsConverted")
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+
+            writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
@@ -210,7 +191,7 @@ for i in range(qnt_simulacoes):
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
     print('escrevendo posicao-acao FINAL 0.0')
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed)
+    writeSimulationData(fileDirectory, positions, None, initial_joint_speed, None)
 
     sim.stopSimulation()
 

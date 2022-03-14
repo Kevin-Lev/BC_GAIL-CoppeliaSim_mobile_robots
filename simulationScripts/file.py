@@ -5,9 +5,6 @@ import os
 
 def removeCharactersFromData(list_data):
     list_data = list_data.replace('[', '').replace(']', '').replace(' ', '')
-    # for data in list_data:
-    #     print(data)
-    #     data.replace('[', '').replace(']', '').replace(' ', '')
 
     return list_data
 
@@ -25,50 +22,41 @@ def createDirectories(directoryString):
             os.mkdir(dirPath)
 
 
-def writeSimulationData(filename, position_data, orientation_data, wheel_data):
+def writeSimulationData(filename, position_data, orientation_data, wheel_data, sensor_data):
 
     createDirectories(filename)
 
     position_data = [position_data[0], position_data[1]]
-    orientation_data = orientation_data[2]
-
     position_data = removeCharactersFromData(str(position_data))
-    orientation_data = removeCharactersFromData(str(orientation_data))
     wheel_data = removeCharactersFromData(str(wheel_data))
-    sensor_data = None
-
     
-
-    # sensor_data = removeCharactersFromData(str(sensor_data))
-    # position_data = removeCharactersFromData(position_data)
-
-    print('position_data REMOVIDO')
-    print(position_data)
-
     file = open(filename, 'a+')
     file.write(position_data + '|')
-    file.write(orientation_data + '|')
+    
+    if orientation_data:
+        orientation_data = orientation_data[2]
+        orientation_data = removeCharactersFromData(str(orientation_data))
+        file.write(orientation_data + '|')
+
     file.write(wheel_data + '|')
-    file.write(';')
-    if sensor_data:
+
+    if sensor_data == None:
+        file.write(';')
+
+    else:
         formatted_sensor_data = ''
         for point in sensor_data:
             dist = str(point[0])
             point_x = str(point[1])
             point_y = str(point[2])
-            point_z = str(point[3])
-            formatted_sensor_data = dist + ',' + point_x + ',' + point_y + ',' + point_z + '/'
+            formatted_sensor_data = dist + ',' + point_x + ',' + point_y + '/'
             file.write(formatted_sensor_data)
         file.write(';')
-            # formatted_sensor_data = dist + ',' + point_x + ',' + point_y + ',' + point_z + '/'
-            # file.write(str(formatted_sensor_data) + ';')
-        # file.write('(' + str(sensor_data[1]) + ', ' + str(sensor_data[2]) + ')')
-    # file.write('\n')
+
     file.close()
 
 
 def readDataImitation(filename):
-    formattedCheckpoints = []
     observations = []
     actions = []
     file = open(filename, 'r')
@@ -77,60 +65,85 @@ def readDataImitation(filename):
     checkpoints.pop() # Remove string vazia que fica após o último ';' 
 
     for check in checkpoints:
+        tipo = ''
+        obs = []
+        jointSpeeds = []
         splitData = check.split('|')
-        # print('splitData')
-        # print(splitData)
+
+        if splitData[len(splitData) - 1] == '':
+            splitData.pop()
+            # print('splitData apos pop')
+            # print(splitData)
+        # splitData.pop()
         position = splitData[0]
         pos_x = float(position.split(',')[0])
         pos_y = float(position.split(',')[1])
-        gamma_angle = float(splitData[1])
-        jointSpeeds = splitData[2]
+        obs.append(pos_x)
+        obs.append(pos_y)
+
+        if len(splitData) == 3: # tem orientação
+            gamma_angle = float(splitData[1])
+            jointSpeeds = splitData[2]
+            obs.append(gamma_angle)
+            tipo = 'withOrientation'
+
+        elif len(splitData) == 4: # tem sensor
+            gamma_angle = float(splitData[1])
+            jointSpeeds = splitData[2]
+            
+            obs.append(gamma_angle)
+
+            points = splitData[3]
+            sensorData = points.split('/')
+            sensorData.pop()
+            # print(sensorData)
+            for point in sensorData:
+                pointData = point.split(',')
+                for data in pointData:
+                    obs.append(float(data))
+
+            tipo = 'withSensor'
+            print('FOI TIPO SENSOR PO')
+
+        else: # sems sensor e sem orientação
+            jointSpeeds = splitData[1]
+            tipo = 'onlyPosicao'
+
         l_wheel_speed = float(jointSpeeds.split(',')[0])
         r_wheel_speed = float(jointSpeeds.split(',')[1])
-        observations.append([pos_x, pos_y, gamma_angle])
+
+        observations.append(obs)
+        # observations.append([pos_x, pos_y, gamma_angle])
         actions.append([l_wheel_speed, r_wheel_speed])
 
-    # print('observations')
-    # print(observations)
-    # print('actions')
-    # print(actions)
+        obs = [] # limpa obs para preparar para o próximo checkpoint
 
-    return observations, actions
-        # print('position')
-        # print(position)
-    # print('checkpoints')
-    # print(checkpoints)
+    observations.append(observations[len(observations) - 1]) # 28 + 1 no observation
+
+    return observations, actions, tipo
 
 
-def readSimulationData(filename):
-    formattedCheckpoints = []
-    formattedSensor = []
-    file = open(filename, 'r')
-    simulation_data = file.read()
-    checkpoints = simulation_data.split(';')
-    checkpoints.pop() # Remove string vazia que fica após o último ';' 
-    for check in checkpoints:
-        splitData = check.split('|')
-        positions = np.fromstring(splitData[0], dtype=float, count=2, sep=",")
-        orientation = np.fromstring(splitData[1], dtype=float, count=1, sep=",")
-        wheel = np.fromstring(splitData[2], dtype=float, count=2, sep=",")
-        # sensor = splitData[3]
-        # # print(positions)
-        # # print(orientation)
-        # # print(wheel)
-        # # print('sensor')
-        # # print(sensor)
-        # sensor_points_split = sensor.split('/')
-        # sensor_points_split.pop()
-        # # print(sensor_points_split)
-        # for point_split in sensor_points_split:
-        #     point_array = np.fromstring(point_split, dtype=float, count=4, sep=",")
-        #     formattedSensor.append(point_array)
-        formattedCheckpoints.append([positions, orientation, wheel])
-        # formattedCheckpoints.append([positions, orientation, wheel, formattedSensor])
-        # print('formattedCheckpoints')
-        # print(formattedCheckpoints)
-        # break
-        formattedSensor = []
-    print('formattedCheckpoints')
-    print(formattedCheckpoints)
+def formatObservation(pos_x, pos_y, gamma_angle, sensorData):
+    # menor_num = 0
+    obs_formatted = []
+
+    obs_formatted.append(pos_x)
+    obs_formatted.append(pos_y)
+
+    if gamma_angle:
+        obs_formatted.append(gamma_angle)
+
+    if sensorData:
+        for array_points in sensorData:
+            for point in array_points:
+                obs_formatted.append(point)
+            # if float(point) < menor_num:
+            #     menor_num = float(point)
+
+    # print('menor valor de sensor encontrado: ')
+    # print(menor_num)
+
+    return obs_formatted
+
+
+

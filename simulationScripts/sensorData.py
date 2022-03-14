@@ -9,3 +9,4 @@ def getSensorData(stringSignal_name):
     points_sensor = sim.unpackTable(points_sensor)
     
     return points_sensor
+
