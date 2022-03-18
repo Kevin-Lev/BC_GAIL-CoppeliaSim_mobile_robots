@@ -57,6 +57,9 @@ for i in range(qnt_simulacoes):
     pos_y = positions[1]
 
     obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+
+    print('obs_data')
+    print(obs_data)
    
     # ativa os motores com velocidade 2.0
     pred = list(bc_policy.predict(obs_data))
@@ -93,16 +96,17 @@ for i in range(qnt_simulacoes):
     # Momento de rotação do robô, diminuindo a velocidade do motor referente a direção desejada
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
+    # orientation[2] = abs(orientation[2])
     # jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
     print(positions[0])
     print(positions[1])
     print(orientation[2])
-    # if (orientation[2] < 0):
-    #     print('orientation[2] before')
-    #     print(orientation[2])
-    #     orientation[2] = -orientation[2]
-    #     print('orientation[2]')
-    #     print(orientation[2])
+    if orientation[2] > 0:
+        print('orientation[2] before')
+        print(orientation[2])
+        orientation[2] = -orientation[2]
+        print('orientation[2]')
+        print(orientation[2])
 
     obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     pred = bc_policy.predict(obs_data)
@@ -161,12 +165,19 @@ for i in range(qnt_simulacoes):
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
+    # orientation[2] = abs(orientation[2])
     gamma_angle = orientation[2]
+    # if -1 < orientation[2] <= -0.0:
+    #     print('orientation[2] before')
+    #     print(orientation[2])
+    #     orientation[2] = -orientation[2]
+    #     print('orientation[2]')
+    #     print(orientation[2])
 
     obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     pred = bc_policy.predict(obs_data)
-    print('orientation[2]')
-    print(orientation[2])
+    # print('orientation[2]')
+    # print(orientation[2])
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])

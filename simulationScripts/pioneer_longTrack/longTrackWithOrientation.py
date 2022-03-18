@@ -90,6 +90,7 @@ for i in range(qnt_simulacoes):
     # Momento de rotação do robô, diminuindo a velocidade do motor referente a direção desejada
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
+    # orientation[2] = abs(orientation[2])
     print(positions[0])
     print(positions[1])
     print(orientation[2])
@@ -151,6 +152,7 @@ for i in range(qnt_simulacoes):
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
+    # orientation[2] = abs(orientation[2])
     sim.setJointTargetVelocity(left_motor_handle, 1.0)
     sim.setJointTargetVelocity(right_motor_handle, 0.5)
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]

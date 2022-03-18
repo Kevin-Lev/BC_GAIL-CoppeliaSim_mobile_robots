@@ -35,6 +35,9 @@ def writeSimulationData(filename, position_data, orientation_data, wheel_data, s
     
     if orientation_data:
         orientation_data = orientation_data[2]
+
+        # if orientation_data <= -3.12 or (orientation_data > -1 and orientation_data <= -0.0): # tratamento
+        #     orientation_data = -orientation_data
         orientation_data = removeCharactersFromData(str(orientation_data))
         file.write(orientation_data + '|')
 
@@ -144,6 +147,50 @@ def formatObservation(pos_x, pos_y, gamma_angle, sensorData):
     # print(menor_num)
 
     return obs_formatted
+
+
+def readTrainAndTestActions(train_filepath, test_filepath):
+    expected_actions = []
+    predicted_actions = []
+
+    train_file = open(train_filepath, 'r')
+    test_file = open(test_filepath, 'r')
+    train_data = train_file.read()
+    test_data = test_file.read()
+
+    checkpoints_train_data = train_data.split(';')
+    checkpoints_test_data = test_data.split(';')
+    checkpoints_train_data.pop()
+    checkpoints_test_data.pop()
+
+    for i in range(len(checkpoints_train_data)):
+        split_train_data = checkpoints_train_data[i].split('|')
+        split_test_data = checkpoints_test_data[i].split('|')
+
+        # print(split_train_data[2])
+        # print(split_test_data)
+
+        train_jointSpeeds = split_train_data[2]
+        test_jointSpeeds = split_test_data[2]
+
+        l_wheel_speed_train = float(train_jointSpeeds.split(',')[0])
+        r_wheel_speed_train = float(train_jointSpeeds.split(',')[1])
+        l_wheel_speed_test = float(test_jointSpeeds.split(',')[0])
+        r_wheel_speed_test = float(test_jointSpeeds.split(',')[1])
+
+        expected_actions.append([l_wheel_speed_train, r_wheel_speed_train])
+        predicted_actions.append([l_wheel_speed_test ,r_wheel_speed_test])
+
+    # print("Expected actions:")
+    # print(expected_actions)
+
+    # print("predicted_actions")
+    # print(predicted_actions)
+
+    return expected_actions, predicted_actions
+
+
+
 
 
 
