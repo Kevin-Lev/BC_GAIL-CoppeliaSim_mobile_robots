@@ -2,10 +2,18 @@ from datetime import datetime
 from time import sleep
 import numpy as np
 import sys
+import stable_baselines3 as sb3
+from stable_baselines3 import PPO
 from zmqRemoteApi import RemoteAPIClient
 from imitation.algorithms import bc
+from imitation.algorithms.adversarial import gail
+from imitation.rewards import reward_nets
+from stable_baselines3.common.env_util import make_vec_env
+from imitation.data import rollout, types
+from gym import spaces
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
-from simulationScripts.file import formatObservation, writeSimulationData
+from simulationScripts.file import formatObservation, readDataImitation, writeSimulationData
+from longTrack_env import LongTrack
 
 client = RemoteAPIClient('localhost',23000)
 
@@ -25,7 +33,7 @@ for i in range(qnt_simulacoes):
         while sim.getSimulationState()!=sim.simulation_stopped:
             sleep(0.1)
 
-    loadedScene = sim.loadScene('../cenas/pioneer_longTrack.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/pioneer_longTrack_noSensor.ttt')
 
     if loadedScene != -1:
         print('Carregou cena pioneer_longTrack.ttt!')
@@ -35,12 +43,19 @@ for i in range(qnt_simulacoes):
     # Run a simulation in synchronous mode:
     # client.setStepping(True)
 
-    bc_policy = bc.reconstruct_policy('simulationData/BC/pioneerLongtrackwithOrientation/bc_policy.zip')
-    # bc_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/pioneer/bc_policy.zip')
-
     now = datetime.now()
     today_date = str(now.day) + '_' + str(now.month) + '_' + str(now.year)
-    fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
+
+    if sys.argv[2] == '1':
+        print('Behavioral Cloning selecionada para as predições!')
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/pioneerLongtrackwithOrientation/bc_policy.zip')
+        fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/BC/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
+    else:
+        print('GAIL selecionada para as predições!')
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/gail_policy.zip')
+        fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/GAIL/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
+
+    
 
     sim.startSimulation() #Executa a simulação
 
@@ -56,14 +71,17 @@ for i in range(qnt_simulacoes):
     pos_x = positions[0]
     pos_y = positions[1]
 
-    obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+    # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
 
-    print('obs_data')
-    print(obs_data)
+    # print('obs_data')
+    # print(obs_data)
    
     # ativa os motores com velocidade 2.0
-    pred = list(bc_policy.predict(obs_data))
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    # pred = imitation_policy.predict(obs_data)
     pred = pred[0].tolist()
+    # sim.setJointTargetVelocity(left_motor_handle, 2.0)
+    # sim.setJointTargetVelocity(right_motor_handle, 2.0)
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
@@ -87,9 +105,11 @@ for i in range(qnt_simulacoes):
         if int(pos_x) <= xInt - 1:
             xInt = int(pos_x)
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(xInt + 1) + ' y: ' + str(positions[1])
-            print(checkInfo)
+            orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None )
+            print(checkInfo)
+
+            # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None )
             print('\n')
 
 
@@ -100,17 +120,24 @@ for i in range(qnt_simulacoes):
     # jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
     print(positions[0])
     print(positions[1])
+    print('orientation[2] before')
     print(orientation[2])
-    if orientation[2] > 0:
-        print('orientation[2] before')
-        print(orientation[2])
-        orientation[2] = -orientation[2]
-        print('orientation[2]')
-        print(orientation[2])
+    orientation[2] = abs(orientation[2])
+    print('orientation[2]')
+    print(orientation[2])
+    # if orientation[2] < 0:
+    #     print('orientation[2] before')
+    #     print(orientation[2])
+    #     orientation[2] = -orientation[2]
+    #     print('orientation[2]')
+    #     print(orientation[2])
 
-    obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
-    pred = bc_policy.predict(obs_data)
+    # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+    # pred = imitation_policy.predict(obs_data)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
     pred = pred[0].tolist()
+    print('pred IJIJI')
+    print(pred)
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
@@ -137,9 +164,11 @@ for i in range(qnt_simulacoes):
     print('acabou tempo')
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
+    pos_y = positions[1]
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
-    pred = bc_policy.predict(obs_data)
+    # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+    # pred = imitation_policy.predict(obs_data)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
@@ -157,16 +186,20 @@ for i in range(qnt_simulacoes):
             yInt = int(y)
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(xInt + 1) + ' y: ' + str(positions[1])
             print(checkInfo)
+            orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None )
+            # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None )
             print('\n')
 
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
+    print(positions[0])
+    print(positions[1])
+    print(orientation[2])
     # orientation[2] = abs(orientation[2])
-    gamma_angle = orientation[2]
+    # gamma_angle = orientation[2]
     # if -1 < orientation[2] <= -0.0:
     #     print('orientation[2] before')
     #     print(orientation[2])
@@ -174,8 +207,9 @@ for i in range(qnt_simulacoes):
     #     print('orientation[2]')
     #     print(orientation[2])
 
-    obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
-    pred = bc_policy.predict(obs_data)
+    # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+    # pred = imitation_policy.predict(obs_data)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
     # print('orientation[2]')
     # print(orientation[2])
     pred = pred[0].tolist()
@@ -201,8 +235,9 @@ for i in range(qnt_simulacoes):
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
     
-    obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
-    pred = bc_policy.predict(obs_data)
+    # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+    # pred = imitation_policy.predict(obs_data)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
@@ -219,17 +254,19 @@ for i in range(qnt_simulacoes):
             xInt = int(pos_x)
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(xInt + 1) + ' y: ' + str(positions[1])
             print(checkInfo)
+            orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None )
+            # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None )
             print('\n')
         
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
     
-    obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
-    pred = bc_policy.predict(obs_data)
+    # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
+    # pred = imitation_policy.predict(obs_data)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])

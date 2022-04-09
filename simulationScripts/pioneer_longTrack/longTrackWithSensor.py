@@ -24,7 +24,7 @@ for i in range(qnt_simulacoes):
         while sim.getSimulationState()!=sim.simulation_stopped:
             sleep(0.1)
 
-    loadedScene = sim.loadScene('../cenas/pioneer_longTrack.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/pioneer_longTrack.ttt')
 
     if loadedScene != -1:
         print('Carregou cena pioneer_longTrack.ttt!')

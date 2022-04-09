@@ -115,6 +115,9 @@ def readDataImitation(filename):
         l_wheel_speed = float(jointSpeeds.split(',')[0])
         r_wheel_speed = float(jointSpeeds.split(',')[1])
 
+        # print('ReadDataIMIT obs')
+        # print(obs)
+        # print([l_wheel_speed, r_wheel_speed])
         observations.append(obs)
         # observations.append([pos_x, pos_y, gamma_angle])
         actions.append([l_wheel_speed, r_wheel_speed])
@@ -148,10 +151,10 @@ def formatObservation(pos_x, pos_y, gamma_angle, sensorData):
 
     return obs_formatted
 
-
-def readTrainAndTestActions(train_filepath, test_filepath):
-    expected_actions = []
-    predicted_actions = []
+def readTrainAndTestPositions(train_filepath, test_filepath):
+    expected_positions = []
+    model_positions = []
+    last_valid_pos = []
 
     train_file = open(train_filepath, 'r')
     test_file = open(test_filepath, 'r')
@@ -165,7 +168,50 @@ def readTrainAndTestActions(train_filepath, test_filepath):
 
     for i in range(len(checkpoints_train_data)):
         split_train_data = checkpoints_train_data[i].split('|')
-        split_test_data = checkpoints_test_data[i].split('|')
+        # split_test_data = checkpoints_test_data[i].split('|')
+
+        try:
+            split_test_data = checkpoints_test_data[i].split('|')
+        except:
+            if not last_valid_pos:
+                last_valid_pos = i - 1
+            split_test_data = checkpoints_test_data[last_valid_pos].split('|')
+
+        posx_train = float(split_train_data[0].split(',')[0])
+        posy_train = float(split_train_data[0].split(',')[1])
+        posx_test = float(split_test_data[0].split(',')[0])
+        posy_test = float(split_test_data[0].split(',')[1])
+
+        expected_positions.append([posx_train, posy_train])
+        model_positions.append([posx_test ,posy_test])
+
+    return expected_positions, model_positions
+
+
+def readTrainAndTestActions(train_filepath, test_filepath):
+    expected_actions = []
+    predicted_actions = []
+    last_valid_action = []
+
+    train_file = open(train_filepath, 'r')
+    test_file = open(test_filepath, 'r')
+    train_data = train_file.read()
+    test_data = test_file.read()
+
+    checkpoints_train_data = train_data.split(';')
+    checkpoints_test_data = test_data.split(';')
+    checkpoints_train_data.pop()
+    checkpoints_test_data.pop()
+
+    for i in range(len(checkpoints_train_data)):
+        split_train_data = checkpoints_train_data[i].split('|')
+
+        try:
+            split_test_data = checkpoints_test_data[i].split('|')
+        except:
+            if not last_valid_action:
+                last_valid_action = i - 1
+            split_test_data = checkpoints_test_data[last_valid_action].split('|')
 
         # print(split_train_data[2])
         # print(split_test_data)

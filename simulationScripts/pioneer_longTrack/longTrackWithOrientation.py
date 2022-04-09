@@ -22,7 +22,7 @@ for i in range(qnt_simulacoes):
         while sim.getSimulationState()!=sim.simulation_stopped:
             sleep(0.1)
 
-    loadedScene = sim.loadScene('../cenas/pioneer_longTrack.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/pioneer_longTrack_noSensor.ttt')
 
     if loadedScene != -1:
         print('Carregou cena pioneer_longTrack.ttt!')
@@ -49,7 +49,7 @@ for i in range(qnt_simulacoes):
     left_motor_handle = sim.getObjectHandle('Pioneer_p3dx_leftMotor')
     right_motor_handle = sim.getObjectHandle('Pioneer_p3dx_rightMotor')
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    laserHandle= sim.getObjectHandle("LaserScannerLaser_2D")
+    
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     pos_x = positions[0]
@@ -80,6 +80,7 @@ for i in range(qnt_simulacoes):
         if int(pos_x) <= xInt - 1:
             xInt = int(pos_x)
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(xInt + 1) + ' y: ' + str(positions[1])
+            orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
             print(checkInfo)
             
@@ -144,6 +145,7 @@ for i in range(qnt_simulacoes):
         #    print('Checkpoint: o robô chegou no metro x: ' + str(positions[1][0]) + ' y: ' + str(yInt))
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(positions[0]) + ' y: ' + str(yInt - 1)
             print(checkInfo)
+            orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
             writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
@@ -186,6 +188,7 @@ for i in range(qnt_simulacoes):
             checkInfo = 'Checkpoint: o robô chegou no metro x: ' + \
                 str(xInt - 1) + ' y: ' + str(positions[1])
             print(checkInfo)
+            orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
             writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
