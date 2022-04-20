@@ -72,21 +72,38 @@ class LongTrack(gym.Env):
         # reward -= sqe
         self.accumate_reward += reward
 
-        self.current_state_done = self.dones[self.transition_iteration]
+        # self.current_state_done = self.dones[self.transition_iteration]
         # print('self.current_state')
         # print(self.current_state[0], self.current_state[1], self.current_state[2])
+
+        # print('STATE')
+        # print(self.current_state)
+        # print('ACTION')
+        # print(self.current_state_expected_action)
+        # print('NEXT STATE')
+        # print(self.next_state)
+        # print('DONE')
+        # print(self.current_state_done)
+
 
         if self.current_state_done == False:
             self.transition_iteration += 1
             self.current_state = self.obs[self.transition_iteration]
             self.current_state_expected_action = self.acts[self.transition_iteration]
             self.next_state = self.next_obs[self.transition_iteration]
+            self.current_state_done = self.dones[self.transition_iteration]
+
+            # if self.current_state_done == True:
+            #     self.current_state_done = self.dones[self.transition_iteration]
+
             # print('PRÓXIMO STATE')
             # print(self.current_state)
             # print('PRÓXIMA ACTION')
             # print(self.current_state_expected_action)
             # print('PRÓXIMO NEXT STATE')
             # print(self.next_state)
+            # print('DONE')
+            # print(self.current_state_done)
         # else:
             # print('self.current_state FINAL')
             # print(self.current_state[0], self.current_state[1], self.current_state[2])

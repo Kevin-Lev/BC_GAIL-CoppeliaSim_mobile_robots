@@ -22,6 +22,63 @@ def createDirectories(directoryString):
             os.mkdir(dirPath)
 
 
+def separateSensorAndAction(sensor_data):
+    light_list = []
+    sensor_list = []
+    action_list = []
+    print('ENTROU CHANGESENSOR')
+    print(sensor_data)
+    for i in range(len(sensor_data)):
+        if i in [9, 10]: # antes era 9,10
+            # print(i)
+            action_list.append(sensor_data[i])
+        elif i == 0:
+            light_list.append(sensor_data[i])
+        else:
+            sensor_list.append(sensor_data[i])
+    
+    # print('sensor_list')
+    # print(sensor_list[0])
+    # print('action_list')
+    # print(action_list)
+
+    return light_list, sensor_list, action_list
+
+def writeEpuckSimData(filename, light_data, sensor_data, wheel_data):
+    createDirectories(filename)
+
+    # print('wheel_data ANTES')
+    # print(wheel_data)
+
+    light_data = removeCharactersFromData(str(light_data))
+    sensor_data = removeCharactersFromData(str(sensor_data))
+    wheel_data = removeCharactersFromData(str(wheel_data))
+
+    # print('light_data')
+    # print(light_data)
+    # print('sensor_data')
+    # print(sensor_data)
+    # print('wheel_data')
+    # print(wheel_data)
+
+    file = open(filename, 'a+')
+    file.write(str(light_data) + '|')
+    file.write(str(sensor_data) + '|')
+    file.write(str(wheel_data) + ';')
+
+    file.close()
+
+    return
+
+def writeEpuckPosition(filename, position_data):
+    createDirectories(filename)
+
+    position_data = [position_data[0], position_data[1]]
+    position_data = removeCharactersFromData(str(position_data))
+    file = open(filename, 'a+')
+    file.write(position_data + ';')
+    file.close()
+
 def writeSimulationData(filename, position_data, orientation_data, wheel_data, sensor_data):
 
     createDirectories(filename)
@@ -57,6 +114,66 @@ def writeSimulationData(filename, position_data, orientation_data, wheel_data, s
         file.write(';')
 
     file.close()
+
+def readEpuckDataImitation(filename):
+    observations = []
+    actions = []
+    file = open(filename, 'r')
+    simulation_data = file.read()
+    checkpoints = simulation_data.split(';')
+    checkpoints.pop() # Remove string vazia que fica após o último ';' 
+
+    for check in checkpoints:
+        tipo = ''
+        obs = []
+        wheels = []
+        splitData = check.split('|')
+
+        if splitData[len(splitData) - 1] == '':
+            splitData.pop()
+
+        lights = splitData[0]
+        sensors = splitData[1].split(',')
+        wheels = splitData[2]
+
+        # print('lights')
+        # print(lights)
+
+        # sensors = sensors.split(',')
+        # print('sensors')
+        # print(sensors)
+        # print('wheels')
+        # print(wheels)
+
+        light_1 = float(lights.split(',')[0])
+        light_2 = float(lights.split(',')[1])
+        light_3 = float(lights.split(',')[2])
+        obs.append(light_1)
+        obs.append(light_2)
+        obs.append(light_3)
+
+        # print(len(sensors))
+        for i in range(len(sensors)):
+            sen = float(sensors[i])
+            obs.append(sen)
+
+        l_wheel_speed = float(wheels.split(',')[0])
+        r_wheel_speed = float(wheels.split(',')[1])
+
+        observations.append(obs)
+        actions.append([l_wheel_speed, r_wheel_speed])
+
+        obs = []
+    
+    tipo = 'withSensor'
+    # print('observations')
+    # print(observations)
+    # print('actions')
+    # print(actions)
+    observations.append(observations[len(observations) - 1]) # 28 + 1 no observation
+
+    return observations, actions, tipo
+    
 
 
 def readDataImitation(filename):

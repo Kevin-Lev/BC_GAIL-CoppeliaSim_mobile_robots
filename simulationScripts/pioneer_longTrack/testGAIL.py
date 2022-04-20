@@ -15,6 +15,11 @@ sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/
 from simulationScripts.file import readDataImitation
 from longTrack_env import LongTrack
 
+
+def testCall(rou):
+    print('rou')
+    print(rou)
+
 timesteps = int(sys.argv[1])
 
 observations, actions, tipo = readDataImitation('simulationData/pioneerLongTrack/withOrientation/training/24_3_2022_definitivo/pioneer_longTrack_0.txt')
@@ -54,7 +59,7 @@ vec_long_env = make_vec_env(lambda: long_env, n_envs=1)
 print('vec_long_env.observation_space')
 print(vec_long_env.observation_space)
 print('vec_long_env.action_space')
-print(vec_long_env.observation_space)
+print(vec_long_env.action_space)
 
 
 gail_reward_net = reward_nets.BasicRewardNet(
@@ -65,9 +70,9 @@ gail_reward_net = reward_nets.BasicRewardNet(
 # print('gail_reward_net')
 # print(gail_reward_net)
 
-gail_logger = gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/logs/')
+gail_logger = gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/logs/', ["stdout", "csv", "log", "tensorboard"])
 
-learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=64, n_steps=64, ent_coef=0.01, n_epochs=10, vf_coef=0.5, tensorboard_log=logdir)
+learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=64, n_steps=64, ent_coef=0.001, n_epochs=30, vf_coef=0.5)
 # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
 # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -89,7 +94,7 @@ bc_policy = gail.GAIL(
 
 # bc_policy.allow_variable_horizon = True
 
-bc_policy.train(total_timesteps=timesteps)
+bc_policy.train(total_timesteps=timesteps, callback=testCall)
 
 # learner_rewards_after_training, _ = evaluate_policy(
 #     learner, vec_long_env, 1, return_episode_rewards=True

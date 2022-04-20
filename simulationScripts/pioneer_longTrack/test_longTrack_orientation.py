@@ -52,7 +52,8 @@ for i in range(qnt_simulacoes):
         fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/BC/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/gail_policy.zip')
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/best_gail/gail_policy_melhor_versao.zip')
+        # imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/gail_policy.zip')
         fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/GAIL/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
 
     
@@ -77,7 +78,7 @@ for i in range(qnt_simulacoes):
     # print(obs_data)
    
     # ativa os motores com velocidade 2.0
-    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     # pred = imitation_policy.predict(obs_data)
     pred = pred[0].tolist()
     # sim.setJointTargetVelocity(left_motor_handle, 2.0)
@@ -134,7 +135,7 @@ for i in range(qnt_simulacoes):
 
     # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     # pred = imitation_policy.predict(obs_data)
-    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     pred = pred[0].tolist()
     print('pred IJIJI')
     print(pred)
@@ -168,7 +169,7 @@ for i in range(qnt_simulacoes):
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
     # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     # pred = imitation_policy.predict(obs_data)
-    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
@@ -209,7 +210,7 @@ for i in range(qnt_simulacoes):
 
     # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     # pred = imitation_policy.predict(obs_data)
-    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     # print('orientation[2]')
     # print(orientation[2])
     pred = pred[0].tolist()
@@ -237,7 +238,7 @@ for i in range(qnt_simulacoes):
     
     # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     # pred = imitation_policy.predict(obs_data)
-    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
@@ -266,7 +267,7 @@ for i in range(qnt_simulacoes):
     
     # obs_data = formatObservation(positions[0], positions[1], orientation[2], None)
     # pred = imitation_policy.predict(obs_data)
-    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]])
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     pred = pred[0].tolist()
     sim.setJointTargetVelocity(left_motor_handle, pred[0])
     sim.setJointTargetVelocity(right_motor_handle, pred[1])
