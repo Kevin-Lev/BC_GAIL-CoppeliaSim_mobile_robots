@@ -130,6 +130,8 @@ else:
         action_space=vec_long_env.action_space
     )
 
+    gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/logs/', ["stdout", "csv", "log", "tensorboard"])
+
     print('gail_reward_net')
     print(gail_reward_net)
 
@@ -145,6 +147,7 @@ else:
         gen_algo=learner,
         # gen_algo=sb3.PPO("MlpPolicy", venv, verbose=1, n_steps=1024),
         reward_net=gail_reward_net
+        custom_logger=gail_logger
     )
 
 

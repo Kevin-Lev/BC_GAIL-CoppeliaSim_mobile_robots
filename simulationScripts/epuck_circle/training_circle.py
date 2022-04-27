@@ -94,10 +94,12 @@ else:
         action_space=vec_circle_env.action_space
     )
 
+    gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrackwithSensor/logs/', ["stdout", "csv", "log", "tensorboard"])
+
     print('gail_reward_net')
     print(gail_reward_net)
 
-    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=batch_length, n_steps=batch_length, ent_coef=0.001, n_epochs=30, vf_coef=0.5)
+    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=64, n_steps=64, ent_coef=0.0, n_epochs=10, vf_coef=0.5)
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -107,7 +109,8 @@ else:
         demonstrations=transitions,
         demo_batch_size=batch_length,
         gen_algo=learner,
-        reward_net=gail_reward_net
+        reward_net=gail_reward_net,
+        custom_logger=gail_logger
     )
 
 

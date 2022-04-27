@@ -65,7 +65,7 @@ for i in range(qnt_simulacoes):
     pos_x = positions[0]
     pos_y = positions[1]
 
-    writeEpuckPosition(fileDirectory_pos, positions)
+    # writeEpuckPosition(fileDirectory_pos, positions)
     
     sim.startSimulation() #Executa a simulação
 
@@ -88,8 +88,8 @@ for i in range(qnt_simulacoes):
         pred = pred[0].tolist()
         sim.setJointTargetVelocity(left_motor_handle, pred[0])    
         sim.setJointTargetVelocity(right_motor_handle, pred[1])   
-        writeEpuckPosition(fileDirectory_pos, positions)
-        writeEpuckSimData(fileDirectory, light_data, sensor_data, [pred[0], pred[1]])
+        # writeEpuckPosition(fileDirectory_pos, positions)
+        # writeEpuckSimData(fileDirectory, light_data, sensor_data, [pred[0], pred[1]])
         
 
     print('PAROU')

@@ -268,6 +268,25 @@ def formatObservation(pos_x, pos_y, gamma_angle, sensorData):
 
     return obs_formatted
 
+def readEpuckTrainandTestPos(train_filepath, test_filepath):
+    expected_positions = []
+    model_positions = []
+
+    train_file = open(train_filepath, 'r')
+    test_file = open(test_filepath, 'r')
+    train_data = train_file.read()
+    test_data = test_file.read()
+
+    checkpoints_train_data = train_data.split(';')
+    checkpoints_test_data = test_data.split(';')
+    checkpoints_train_data.pop()
+    checkpoints_test_data.pop()
+
+    print('checkpoints_train_data')
+    print(len(checkpoints_train_data))
+    print('checkpoints_test_data')
+    print(len(checkpoints_test_data))
+
 def readTrainAndTestPositions(train_filepath, test_filepath):
     expected_positions = []
     model_positions = []
