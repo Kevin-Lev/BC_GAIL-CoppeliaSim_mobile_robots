@@ -23,7 +23,9 @@ def testCall(rou):
 timesteps = int(sys.argv[1])
 
 observations, actions, tipo = readDataImitation('simulationData/pioneerLongTrack/withOrientation/training/24_3_2022_definitivo/pioneer_longTrack_0.txt')
-batch_length = len(observations) - 1
+filedir = 'simulationData/pioneerLongTrack/withOrientation/training/24_3_2022_definitivo/pioneer_longTrack_0.txt'
+batch_length = len(observations)
+# batch_length = len(observations) - 1
 observations = np.array(observations, dtype=np.float32)
 actions = np.array(actions, dtype=np.float32)
 
@@ -48,7 +50,7 @@ obs_highs = np.array([7.1195e+00, 4.7250e+00, 3.141592], dtype=np.float32)
 act_lows = np.array([0.0, 0.0], dtype=np.float32) 
 act_highs = np.array([2.0, 2.0], dtype=np.float32) 
 
-long_env = LongTrack()
+long_env = LongTrack(filedir)
 vec_long_env = make_vec_env(lambda: long_env, n_envs=1)
 # vec_long_env = DummyVecEnv([lambda: long_env] * 8)
 
@@ -72,7 +74,7 @@ gail_reward_net = reward_nets.BasicRewardNet(
 
 gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/logs/', ["stdout", "csv", "log", "tensorboard"])
 
-learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=64, n_steps=64, ent_coef=0.0, n_epochs=10, vf_coef=0.5)
+learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=1280, n_steps=1280, ent_coef=0.001, n_epochs=10, vf_coef=0.5)
 # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
 # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -93,7 +95,7 @@ bc_policy = gail.GAIL(
 
 # bc_policy.allow_variable_horizon = True
 
-bc_policy.train(total_timesteps=timesteps, callback=testCall)
+bc_policy.train(total_timesteps=timesteps)
 
 # learner_rewards_after_training, _ = evaluate_policy(
 #     learner, vec_long_env, 1, return_episode_rewards=True
@@ -134,8 +136,8 @@ print('Carregou GAIL!')
 
 ppo_gail_trained = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/gail_policy.zip')
 
-print('Poses PPO GAIL TRAINED')
+print('Poses PPO GAIL TRAINED DETERMINISTIC')
 for pose in poseList:
-    pred = ppo_gail_trained.predict(pose)
+    pred = ppo_gail_trained.predict(pose, deterministic=True)
     print(pose)
     print(pred)

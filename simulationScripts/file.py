@@ -287,6 +287,30 @@ def readEpuckTrainandTestPos(train_filepath, test_filepath):
     print('checkpoints_test_data')
     print(len(checkpoints_test_data))
 
+def readSinglePositions(filepath):
+    read_positions = []
+
+    file = open(filepath, 'r')
+    data = file.read()
+
+    checkpoints_data = data.split(';')
+    checkpoints_data.pop()
+
+    for i in range(len(checkpoints_data)):
+        split_train_data = checkpoints_data[i].split('|')
+        # split_test_data = checkpoints_test_data[i].split('|')
+
+        posx_train = float(split_train_data[0].split(',')[0])
+        posy_train = float(split_train_data[0].split(',')[1])
+
+        read_positions.append([posx_train, posy_train])
+
+    print('read_positions')
+    print(read_positions)
+    print(len(read_positions))
+    return read_positions
+
+
 def readTrainAndTestPositions(train_filepath, test_filepath):
     expected_positions = []
     model_positions = []

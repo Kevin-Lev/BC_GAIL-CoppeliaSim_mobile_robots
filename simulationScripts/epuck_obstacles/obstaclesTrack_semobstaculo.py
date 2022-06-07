@@ -23,10 +23,10 @@ for i in range(qnt_simulacoes):
             sleep(0.1)
 
 
-    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/e_puck_trajetoria_circular.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_semobstaculo.ttt')
 
     if loadedScene != -1:
-        print('Carregou cena e_puck_trajetoria_circular.ttt!')
+        print('Carregou cena epuck_obstacles_track_small_semobstaculo.ttt!')
     else:
         print('falha ao tentar carregar cena!')
 
@@ -38,8 +38,8 @@ for i in range(qnt_simulacoes):
     now = datetime.now()
     today_date = str(now.day) + '_' + str(now.month) + '_' + str(now.year)
 
-    fileDirectory = 'simulationData/epuckCircletrack/withSensor/training/' + today_date + '/epuck_circleTrack_' + str(i) + '.txt'
-    fileDirectory_pos = 'simulationData/epuckCircletrack/withSensor/training/' + today_date + '/epuck_circle_positions_' + str(i) + '.txt'
+    fileDirectory = 'simulationData/epuckObstaclestrack_semobstaculo/withSensor/training/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
+    fileDirectory_pos = 'simulationData/epuckObstaclestrack_semobstaculo/withSensor/training/' + today_date + '/epuck_obstacles_positions' + str(i) + '.txt'
 
     #handles iniciais
     epuck_handle = sim.getObjectHandle('ePuck')
@@ -77,7 +77,7 @@ for i in range(qnt_simulacoes):
     # sleep(2)
     i = 0
 
-    while float(format(pos_x, ".1f")) != -0.7 or float(format(pos_y, ".1f")) != -0.7:
+    while float(format(pos_x, ".1f")) != 2.5 or float(format(pos_y, ".1f")) != -1.7:
         sleep(0.1)
         i += 1
         print('iteração atual: ' + str(i))
@@ -88,6 +88,10 @@ for i in range(qnt_simulacoes):
             positions = sim.getObjectPosition(epuck_handle, -1)
             pos_x = positions[0]
             pos_y = positions[1]
+            print('float(format(pos_x, ".1f"))')
+            print(float(format(pos_x, ".1f")))
+            print('float(format(pos_y, ".1f"))')
+            print(float(format(pos_y, ".1f")))
             writeEpuckPosition(fileDirectory_pos, positions)
             writeEpuckSimData(fileDirectory, light_data, sensor_data, action_data)
         except:

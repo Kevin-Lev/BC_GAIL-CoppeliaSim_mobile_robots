@@ -17,6 +17,7 @@ def go():
 total_timesteps = int(sys.argv[1])
 
 observations, actions, tipo = readDataImitation('simulationData/pioneerLongTrack/withOrientation/training/24_3_2022_definitivo/pioneer_longTrack_0.txt')
+filedir = 'simulationData/pioneerLongTrack/withOrientation/training/24_3_2022_definitivo/pioneer_longTrack_0.txt'
 batch_length = len(observations) - 1
 observations = np.array(observations, dtype=np.float32)
 actions = np.array(actions, dtype=np.float32)
@@ -45,7 +46,7 @@ obs_highs = np.array([7.1195e+00, 4.7250e+00, 3.141592], dtype=np.float32)
 act_lows = np.array([0.0, 0.0], dtype=np.float32) 
 act_highs = np.array([2.0, 2.0], dtype=np.float32) 
 
-long_env = LongTrack()
+long_env = LongTrack(filedir)
 vec_long_env = make_vec_env(lambda: long_env, n_envs=1, monitor_dir='simulationScripts/pioneer_longTrack/')
 
 logdir = '/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/PPO/pioneerLongtrackwithOrientation/logs/'

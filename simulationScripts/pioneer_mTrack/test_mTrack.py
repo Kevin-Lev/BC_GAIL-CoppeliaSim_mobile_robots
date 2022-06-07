@@ -1,6 +1,9 @@
 from datetime import datetime
 from time import sleep
 import sys
+
+from stable_baselines3 import PPO
+from imitation.algorithms import bc
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
 from zmqRemoteApi import RemoteAPIClient
 from simulationScripts.file import writeSimulationData
@@ -35,7 +38,17 @@ for i in range(qnt_simulacoes):
     now = datetime.now()
     today_date = str(now.day) + '_' + str(now.month) + '_' + str(now.year)
 
-    fileDirectory = 'simulationData/pioneerMTrack/training/' + today_date + '/pioneer_mTrack_' + str(i) + '.txt'
+    if sys.argv[2] == '1':
+        print('Behavioral Cloning selecionada para as predições!')
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/pioneerMTrackwithOrientation/bc_policy.zip')
+        fileDirectory = 'simulationData/pioneerMTrack/test/BC/' + today_date + '/pioneer_mTrack_' + str(i) + '.txt'
+    else:
+        print('GAIL selecionada para as predições!')
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerMTrack/gail_policy.zip')
+        # imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerMTrack/gail_policy.zip')
+        fileDirectory = 'simulationData/pioneerMTrack/test/GAIL/' + today_date + '/pioneer_mTrack_' + str(i) + '.txt'
+
+    # fileDirectory = 'simulationData/pioneerMTrack/training/' + today_date + '/pioneer_mTrack_' + str(i) + '.txt'
 
     sim.startSimulation() #Executa a simulação
 
@@ -54,14 +67,17 @@ for i in range(qnt_simulacoes):
     print(pos_x)
 
     # ativa os motores com velocidade 2.0
-    sim.setJointTargetVelocity(left_motor_handle, 2.0)
-    sim.setJointTargetVelocity(right_motor_handle, 2.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
 
     initial_position = positions
     initial_orientation = orientation
     initial_joint_speed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, initial_position, initial_orientation, initial_joint_speed, None)
+    # writeSimulationData(fileDirectory, initial_position, initial_orientation, initial_joint_speed, None)
 
     yInt = int(pos_y)
 
@@ -86,11 +102,14 @@ for i in range(qnt_simulacoes):
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
     # orientation[2] = abs(orientation[2])
-    sim.setJointTargetVelocity(left_motor_handle, 1.0)
-    sim.setJointTargetVelocity(right_motor_handle, 0.5)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     gamma_angle = orientation[2]
 
@@ -112,11 +131,14 @@ for i in range(qnt_simulacoes):
     positions = sim.getObjectPosition(pioneer_handle, -1)
     pos_y = positions[1]
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 2.0)
-    sim.setJointTargetVelocity(right_motor_handle, 2.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
 
     xInt = int(pos_x)
@@ -134,10 +156,10 @@ for i in range(qnt_simulacoes):
         jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
         # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
-        print('pos_x')
-        print(pos_x)
-        print('pos_y')
-        print(pos_y)
+        # print('pos_x')
+        # print(pos_x)
+        # print('pos_y')
+        # print(pos_y)
 
     # ROBÔ CHEGOU NO CENTRO DO MAPA
     checkInfo = 'Checkpoint: o robô chegou no metro x: ' + str(positions[0]) + ' y: ' + str(positions[1])
@@ -146,27 +168,33 @@ for i in range(qnt_simulacoes):
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
     # orientation[2] = abs(orientation[2])
-    sim.setJointTargetVelocity(left_motor_handle, 0.5)
-    sim.setJointTargetVelocity(right_motor_handle, 1.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     gamma_angle = orientation[2]
 
     while float(format(gamma_angle, ".2f")) != -2.30:
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         gamma_angle = orientation[2]
-        print('gamma_angle')
-        print(gamma_angle)
+        # print('gamma_angle')
+        # print(gamma_angle)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 2.0)
-    sim.setJointTargetVelocity(right_motor_handle, 2.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     while float(format(pos_x, '.2f')) >= -3.95:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -175,34 +203,40 @@ for i in range(qnt_simulacoes):
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-        print('pos_x')
-        print(pos_x)
+        # print('pos_x')
+        # print(pos_x)
         # print('pos_y')
         # print(pos_y)
 
     # ROBO CHEGOU NO CANTO SUPERIOR DIREITO
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 1.0)
-    sim.setJointTargetVelocity(right_motor_handle, 0.5)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(gamma_angle, ".2f")) != 1.65:
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         gamma_angle = orientation[2]
-        print('gamma_angle')
-        print(gamma_angle)
+        # print('gamma_angle')
+        # print(gamma_angle)
 
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 2.0)
-    sim.setJointTargetVelocity(right_motor_handle, 2.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(pos_y, '.2f')) <= 3.30:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -213,31 +247,37 @@ for i in range(qnt_simulacoes):
 
         # print('pos_x')
         # print(pos_x)
-        print('pos_y')
-        print(pos_y)
+        # print('pos_y')
+        # print(pos_y)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 1.0)
-    sim.setJointTargetVelocity(right_motor_handle, 0.5)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     #CHEGOU CANTO INFERIOR DIREITO
     while float(format(gamma_angle, ".2f")) != -0.6:
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         gamma_angle = orientation[2]
-        print('gamma_angle')
-        print(gamma_angle)
+        # print('gamma_angle')
+        # print(gamma_angle)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 1.0)
-    sim.setJointTargetVelocity(right_motor_handle, 1.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(pos_x, '.2f')) <= -0.35:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -246,32 +286,38 @@ for i in range(qnt_simulacoes):
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-        print('pos_x')
-        print(pos_x)
+        # print('pos_x')
+        # print(pos_x)
         # print('pos_y')
         # print(pos_y)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 0.5)
-    sim.setJointTargetVelocity(right_motor_handle, 1.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(gamma_angle, ".2f")) != 0.50:
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         gamma_angle = orientation[2]
-        print('gamma_angle')
-        print(gamma_angle)
+        # print('gamma_angle')
+        # print(gamma_angle)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 1.0)
-    sim.setJointTargetVelocity(right_motor_handle, 1.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(pos_x, '.2f')) <= 5.70:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -280,20 +326,23 @@ for i in range(qnt_simulacoes):
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
         jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-        print('pos_x')
-        print(pos_x)
+        # print('pos_x')
+        # print(pos_x)
         # print('pos_y')
         # print(pos_y)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    sim.setJointTargetVelocity(left_motor_handle, 0.0)
-    sim.setJointTargetVelocity(right_motor_handle, 0.0)
+    pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
+    pred = pred[0].tolist()
+    sim.setJointTargetVelocity(left_motor_handle, pred[0])
+    sim.setJointTargetVelocity(right_motor_handle, pred[1])
+    print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
     # sleep(3)
 
-    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     sim.stopSimulation()
 

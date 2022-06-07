@@ -14,10 +14,10 @@ class LongTrack(gym.Env):
     """Custom Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self):
+    def __init__(self, filedir):
         super(LongTrack, self).__init__()
 
-        observations, actions, tipo = readDataImitation('simulationData/pioneerLongTrack/withOrientation/training/24_3_2022_definitivo/pioneer_longTrack_0.txt')
+        observations, actions, tipo = readDataImitation(filedir)
         observations = np.array(observations, dtype=np.float32)
         actions = np.array(actions, dtype=np.float32)
 
@@ -86,12 +86,23 @@ class LongTrack(gym.Env):
         # print(self.current_state_done)
 
 
+        # print('self.transition_iteration')
+        # print(self.transition_iteration)
+        # print('self.obs')
+        # print(len(self.obs))
+        # print('self.current_state_done')
+        # print(self.current_state_done)
+        # print('self.current_state')
+        # print(self.current_state)
+        # print('self.next_state')
+        # print(self.next_state)
+        self.current_state_done = self.dones[self.transition_iteration]
+
         if self.current_state_done == False:
             self.transition_iteration += 1
             self.current_state = self.obs[self.transition_iteration]
             self.current_state_expected_action = self.acts[self.transition_iteration]
             self.next_state = self.next_obs[self.transition_iteration]
-            self.current_state_done = self.dones[self.transition_iteration]
 
             # if self.current_state_done == True:
             #     self.current_state_done = self.dones[self.transition_iteration]

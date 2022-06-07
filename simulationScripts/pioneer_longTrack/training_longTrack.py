@@ -111,7 +111,7 @@ if imitation_method == '1':
 
 else:
 
-    long_env = LongTrack()
+    long_env = LongTrack(filedir)
     vec_long_env = make_vec_env(lambda: long_env, n_envs=1)
     # vec_long_env = DummyVecEnv([lambda: long_env] * 8)
 
@@ -135,7 +135,7 @@ else:
     print('gail_reward_net')
     print(gail_reward_net)
 
-    learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=1, tensorboard_log=logdir, target_kl=0.003)
+    learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=128, n_steps=128, ent_coef=0.001, n_epochs=10)
     # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -146,7 +146,7 @@ else:
         demo_batch_size=6,
         gen_algo=learner,
         # gen_algo=sb3.PPO("MlpPolicy", venv, verbose=1, n_steps=1024),
-        reward_net=gail_reward_net
+        reward_net=gail_reward_net,
         custom_logger=gail_logger
     )
 

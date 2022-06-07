@@ -26,10 +26,10 @@ for i in range(qnt_simulacoes):
             sleep(0.1)
 
 
-    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/e_puck_trajetoria_circular_test.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_test.ttt')
 
     if loadedScene != -1:
-        print('Carregou cena e_puck_trajetoria_circular_sem_script.ttt!')
+        print('Carregou cena epuck_obstacles_track_small_test.ttt!')
     else:
         print('falha ao tentar carregar cena!')
 
@@ -43,14 +43,14 @@ for i in range(qnt_simulacoes):
 
     if sys.argv[2] == '1':
         print('Behavioral Cloning selecionada para as predições!')
-        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrackwithSensor/bc_policy.zip')
-        fileDirectory = 'simulationData/epuckCircletrack/withSensor/test/BC/' + today_date + '/epuck_circleTrack_' + str(i) + '.txt'
-        fileDirectory_pos = 'simulationData/epuckCircletrack/withSensor/test/BC/' + today_date + '/epuck_circle_positions_' + str(i) + '.txt'
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor/bc_policy.zip')
+        fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
+        fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrackwithSensor/gail_policy.zip')
-        fileDirectory = 'simulationData/epuckCircletrack/withSensor/test/GAIL/' + today_date + '/epuck_circleTrack_' + str(i) + '.txt'
-        fileDirectory_pos = 'simulationData/epuckCircletrack/withSensor/test/GAIL/' + today_date + '/epuck_circle_positions_' + str(i) + '.txt'
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor/gail_policy.zip')
+        fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
+        fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
 
     # fileDirectory = 'simulationData/epuckCircle/withSensor/test/' + today_date + '/epuck_circle_' + str(i) + '.txt'
     # fileDirectory_pos = 'simulationData/epuckCircle/withSensor/test/' + today_date + '/epuck_circle_positions' + str(i) + '.txt'
@@ -76,7 +76,7 @@ for i in range(qnt_simulacoes):
     # sleep(2)
     i = 0
 
-    while float(format(pos_x, ".1f")) != -0.7 or float(format(pos_y, ".1f")) != -0.7:
+    while float(format(pos_x, ".1f")) != 2.5 or float(format(pos_y, ".1f")) != -1.7:
         sleep(0.1)
         i += 1
         print('iteração atual: ' + str(i))

@@ -54,7 +54,7 @@ print(vec_circle_env.observation_space)
 
 
 if imitation_method == '1':
-    bc_logger = logger.configure("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack" + tipo + "/logs/", ["stdout", "csv", "log", "tensorboard"])
+    bc_logger = logger.configure("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack_semobstaculo" + tipo + "/logs/", ["stdout", "csv", "log", "tensorboard"])
     # bc_logger = logger.configure(tempdir_path / "BC/")
 
 
@@ -67,9 +67,9 @@ if imitation_method == '1':
     )
     bc_trainer.train(n_epochs=total_epochs, progress_bar=True)
 
-    bc_trainer.save_policy("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack" + tipo + "/bc_policy.zip")
+    bc_trainer.save_policy("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack_semobstaculo" + tipo + "/bc_policy.zip")
 
-    pol = bc.reconstruct_policy("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack" + tipo + "/bc_policy.zip")
+    pol = bc.reconstruct_policy("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack_semobstaculo" + tipo + "/bc_policy.zip")
 
     # act = pol.predict([-0.8000004291534424,-0.6000002026557922,-1.5708264112472534])
     # act = pol.predict([-0.6685453057289124,-0.7484503388404846,-1.5713883638381958], deterministic=True)
@@ -94,12 +94,12 @@ else:
         action_space=vec_circle_env.action_space
     )
 
-    gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrackwithSensor/logs/', ["stdout", "csv", "log", "tensorboard"])
+    gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrack_semobstaculowithSensor/logs/', ["stdout", "csv", "log", "tensorboard"])
 
     print('gail_reward_net')
     print(gail_reward_net)
 
-    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=128, n_steps=2048, ent_coef=0.0, n_epochs=10, vf_coef=0.5)
+    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=60, n_steps=120, ent_coef=0.0, n_epochs=10, vf_coef=0.5)
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -120,7 +120,7 @@ else:
 
     bc_policy.train(total_timesteps=total_epochs)
 
-    bc_policy.gen_algo.save('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrack' + tipo + '/gail_policy.zip')
+    bc_policy.gen_algo.save('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrack_semobstaculo' + tipo + '/gail_policy.zip')
 
 
 

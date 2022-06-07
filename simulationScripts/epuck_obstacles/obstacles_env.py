@@ -10,16 +10,16 @@ sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/
 from simulationScripts.file import readDataImitation, readEpuckDataImitation
 
 
-class CircleTrack(gym.Env):
+class ObstaclesTrack(gym.Env):
     """Custom Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
     def __init__(self, filedir):
-        super(CircleTrack, self).__init__()
+        super(ObstaclesTrack, self).__init__()
 
         # observations, actions, tipo = readDataImitation('simulationData/epuckCircle/withOrientation/training/10_4_2022/epuck_circle_0.txt')
         observations, actions, tipo = readEpuckDataImitation(filedir)
-        # observations, actions, tipo = readEpuckDataImitation('simulationData/epuckCircletrack/withSensor/training/19_4_2022_definitivo/epuck_circle_0.txt')
+        # observations, actions, tipo = readEpuckDataImitation('simulationData/epuckObstaclesTrack/withSensor/training/19_4_2022_definitivo/epuck_circle_0.txt')
         observations = np.array(observations, dtype=np.float32)
         actions = np.array(actions, dtype=np.float32)
 
@@ -53,26 +53,13 @@ class CircleTrack(gym.Env):
         # pass
         reward = 0.0
         # reward = 100
-        # sqe = CircleTrack.squared_error(self.current_state_expected_action, action)
+        # sqe = ObstaclesTrack.squared_error(self.current_state_expected_action, action)
         # if sqe == 0.0:
         #     reward *= 5
         # else:
         #     reward /= 2
         # reward -= sqe
         self.accumate_reward += reward
-
-        # self.current_state_done = self.dones[self.transition_iteration]
-        # print('self.current_state')
-        # print(self.current_state[0], self.current_state[1], self.current_state[2])
-
-        # print('STATE')
-        # print(self.current_state)
-        # print('ACTION')
-        # print(self.current_state_expected_action)
-        # print('NEXT STATE')
-        # print(self.next_state)
-        # print('DONE')
-        # print(self.current_state_done)
 
         self.current_state_done = self.dones[self.transition_iteration]
 
