@@ -43,14 +43,14 @@ for i in range(qnt_simulacoes):
 
     if sys.argv[2] == '1':
         print('Behavioral Cloning selecionada para as predições!')
-        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor/bc_policy.zip')
-        fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
-        fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackGeneralizedwithSensor/bc_policy.zip')
+        fileDirectory = 'simulationData/epuckObstaclestrackGeneralized/withSensor/test/BC/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
+        fileDirectory_pos = 'simulationData/epuckObstaclestrackGeneralized/withSensor/test/BC/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor/gail_policy.zip')
-        fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
-        fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackGeneralizedwithSensor/gail_policy.zip')
+        fileDirectory = 'simulationData/epuckObstaclestrackGeneralized/withSensor/test/GAIL/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
+        fileDirectory_pos = 'simulationData/epuckObstaclestrackGeneralized/withSensor/test/GAIL/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
 
     # fileDirectory = 'simulationData/epuckCircle/withSensor/test/' + today_date + '/epuck_circle_' + str(i) + '.txt'
     # fileDirectory_pos = 'simulationData/epuckCircle/withSensor/test/' + today_date + '/epuck_circle_positions' + str(i) + '.txt'

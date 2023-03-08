@@ -1,6 +1,6 @@
 from datetime import datetime
 from time import sleep
-import sys, numpy as np
+import sys
 import stable_baselines3 as sb3
 from stable_baselines3 import PPO
 from imitation.algorithms import bc
@@ -26,10 +26,10 @@ for i in range(qnt_simulacoes):
             sleep(0.1)
 
 
-    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_test.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/e_puck_z_track_test.ttt')
 
     if loadedScene != -1:
-        print('Carregou cena epuck_obstacles_track_small_test.ttt!')
+        print('Carregou cena epuck_z_track_test.ttt!')
     else:
         print('falha ao tentar carregar cena!')
 
@@ -43,17 +43,14 @@ for i in range(qnt_simulacoes):
 
     if sys.argv[2] == '1':
         print('Behavioral Cloning selecionada para as predições!')
-        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor/bc_policy.zip')
-        fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
-        fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckZtrackwithSensor/bc_policy.zip')
+        fileDirectory = 'simulationData/epuckZtrack/withSensor/test/BC/' + today_date + '/epuck_zTrack_' + str(i) + '.txt'
+        fileDirectory_pos = 'simulationData/epuckZtrack/withSensor/test/BC/' + today_date + '/epuck_z_positions_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor/gail_policy.zip')
-        fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
-        fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
-
-    # fileDirectory = 'simulationData/epuckCircle/withSensor/test/' + today_date + '/epuck_circle_' + str(i) + '.txt'
-    # fileDirectory_pos = 'simulationData/epuckCircle/withSensor/test/' + today_date + '/epuck_circle_positions' + str(i) + '.txt'
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckZtrackwithSensor/gail_policy.zip')
+        fileDirectory = 'simulationData/epuckZtrack/withSensor/test/GAIL/' + today_date + '/epuck_zTrack_' + str(i) + '.txt'
+        fileDirectory_pos = 'simulationData/epuckZtrack/withSensor/test/GAIL/' + today_date + '/epuck_z_positions_' + str(i) + '.txt'
 
     #handles iniciais
     epuck_handle = sim.getObjectHandle('ePuck')
@@ -76,7 +73,7 @@ for i in range(qnt_simulacoes):
     # sleep(2)
     i = 0
 
-    while float(format(pos_x, ".1f")) != 2.5 or float(format(pos_y, ".1f")) != -1.7:
+    while float(format(pos_x, ".1f")) != 2.0 or float(format(pos_y, ".1f")) != 1.8:
         sleep(0.1)
         i += 1
         print('iteração atual: ' + str(i))
@@ -88,11 +85,9 @@ for i in range(qnt_simulacoes):
             pos_x = positions[0]
             pos_y = positions[1]
             pred = imitation_policy.predict([light_data[0][0], light_data[0][1], light_data[0][2], sensor_data[0], sensor_data[1], sensor_data[2], sensor_data[3], sensor_data[4], sensor_data[5], sensor_data[6], sensor_data[7]], deterministic=True)
-            # pred = np.float16(pred)
-            pred = pred[0].tolist()
-            # pred = [np.float16(pred[0]), np.float16(pred[1])]
             print('pred')
             print(pred)
+            pred = pred[0].tolist()
             sim.setJointTargetVelocity(left_motor_handle, pred[0])    
             sim.setJointTargetVelocity(right_motor_handle, pred[1])   
             writeEpuckPosition(fileDirectory_pos, positions)

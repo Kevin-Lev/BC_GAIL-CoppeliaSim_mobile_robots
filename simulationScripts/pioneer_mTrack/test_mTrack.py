@@ -77,7 +77,7 @@ for i in range(qnt_simulacoes):
     initial_orientation = orientation
     initial_joint_speed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, initial_position, initial_orientation, initial_joint_speed, None)
+    writeSimulationData(fileDirectory, initial_position, initial_orientation, initial_joint_speed, None)
 
     yInt = int(pos_y)
 
@@ -109,7 +109,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     gamma_angle = orientation[2]
 
@@ -138,7 +138,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
 
     xInt = int(pos_x)
@@ -175,7 +175,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     gamma_angle = orientation[2]
 
@@ -194,7 +194,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     while float(format(pos_x, '.2f')) >= -3.95:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -218,7 +218,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(gamma_angle, ".2f")) != 1.65:
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
@@ -236,7 +236,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(pos_y, '.2f')) <= 3.30:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -259,7 +259,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     #CHEGOU CANTO INFERIOR DIREITO
     while float(format(gamma_angle, ".2f")) != -0.6:
@@ -277,7 +277,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(pos_x, '.2f')) <= -0.35:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -300,7 +300,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(gamma_angle, ".2f")) != 0.50:
         orientation = sim.getObjectOrientation(pioneer_handle, -1)
@@ -317,7 +317,7 @@ for i in range(qnt_simulacoes):
     print("Velocidade das rodas prevista: " + str(pred[0]) + " " + str(pred[1]))
     jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     while float(format(pos_x, '.2f')) <= 5.70:
         positions = sim.getObjectPosition(pioneer_handle, -1)
@@ -342,7 +342,7 @@ for i in range(qnt_simulacoes):
 
     # sleep(3)
 
-    # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+    writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
 
     sim.stopSimulation()
 

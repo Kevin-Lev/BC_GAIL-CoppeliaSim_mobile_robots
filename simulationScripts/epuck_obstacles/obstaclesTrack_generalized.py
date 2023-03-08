@@ -1,11 +1,10 @@
 from datetime import datetime
 from time import sleep
-import sys, numpy as np
+import sys
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
 from zmqRemoteApi import RemoteAPIClient
 from simulationScripts.file import separateSensorAndAction, writeEpuckPosition, writeEpuckSimData, writeSimulationData
 
-# np.set_printoptions(precision=4)
 
 client = RemoteAPIClient('localhost',23000)
 
@@ -32,28 +31,19 @@ for i in range(qnt_simulacoes):
         print('Carregou cena obstacles_track_small_2.ttt!')
     elif sys.argv[2] == '3':
         loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_3.ttt')
-        print('Carregou cena obstacles_track_small_3.ttt!')
+        print('Carregou cena obstacles_track_small_3.ttt.ttt!')
     else:
-        loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small.ttt')
+        loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/obstacles_track_small.ttt')
         print('Carregou cena obstacles_track_small.ttt!')
     
-    # loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small.ttt')
-
-    # if loadedScene != -1:
-    #     print('Carregou cena epuck_obstacles_track_small.ttt!')
-    # else:
-    #     print('falha ao tentar carregar cena!')
-
-    # Run a simulation in synchronous mode:
-    # client.setStepping(True)
-
+  
     print('Iniciando a simulação ' + str(i) + '!')
 
     now = datetime.now()
     today_date = str(now.day) + '_' + str(now.month) + '_' + str(now.year)
 
-    fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/training/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
-    fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/training/' + today_date + '/epuck_obstacles_positions' + str(i) + '.txt'
+    fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/training/' + today_date + '/epuck_zTrack_' + str(i) + '.txt'
+    fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/training/' + today_date + '/epuck_z_positions' + str(i) + '.txt'
 
     #handles iniciais
     epuck_handle = sim.getObjectHandle('ePuck')
@@ -99,27 +89,17 @@ for i in range(qnt_simulacoes):
             sensor_and_wheel = sim.getStringSignal('sensor_and_wheel')
             sensor_and_wheel = sim.unpackTable(sensor_and_wheel)
             light_data, sensor_data, action_data = separateSensorAndAction(sensor_and_wheel[0])
-            # print(type(light_data))
-            # print(type(sensor_data))
-            # print(type(action_data))
-            # light_data = [np.float32(light_data[0][0]), np.float32(light_data[0][1]), np.float32(light_data[0][2])]
-            # sensor_data = [np.float32(sensor_data[0]), np.float32(sensor_data[1]), np.float32(sensor_data[2]), np.float32(sensor_data[3]), np.float32(sensor_data[4]), np.float32(sensor_data[5]), np.float32(sensor_data[6]), np.float32(sensor_data[7])]
-            # action_data = [np.float32(action_data[0]), np.float32(action_data[1])]
-            print(light_data)
-            print(sensor_data)
-            print(action_data)
-            # light_data, sensor_data, action_data = np.float32(light_data), np.float32(sensor_data), np.float32(action_data)
             positions = sim.getObjectPosition(epuck_handle, -1)
             pos_x = positions[0]
             pos_y = positions[1]
-            # print('float(format(pos_x, ".1f"))')
-            # print(float(format(pos_x, ".1f")))
-            # print('float(format(pos_y, ".1f"))')
-            # print(float(format(pos_y, ".1f")))
+            print('float(format(pos_x, ".1f"))')
+            print(float(format(pos_x, ".1f")))
+            print('float(format(pos_y, ".1f"))')
+            print(float(format(pos_y, ".1f")))
             writeEpuckPosition(fileDirectory_pos, positions)
             writeEpuckSimData(fileDirectory, light_data, sensor_data, action_data)
-        except Exception as e:
-            print('Erro! Ainda está aguardando o buffer...', e)
+        except:
+            print('Erro! Ainda está aguardando o buffer...')
 
 
     print('PAROU')

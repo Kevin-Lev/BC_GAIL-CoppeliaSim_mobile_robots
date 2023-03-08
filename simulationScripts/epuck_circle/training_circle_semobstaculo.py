@@ -8,6 +8,8 @@ from imitation.algorithms.adversarial import gail
 from stable_baselines3.common.env_util import make_vec_env
 from imitation.rewards import reward_nets
 import stable_baselines3 as sb3
+from stable_baselines3.common.policies import ActorCriticPolicy
+import torch as th
 from circle_env import CircleTrack
 
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
@@ -17,11 +19,14 @@ from simulationScripts.file import readEpuckDataImitation
 total_epochs = int(sys.argv[1])
 filedir = sys.argv[2]
 imitation_method = sys.argv[3]
+nets_number = int(sys.argv[4])
 
 observations, actions, tipo = readEpuckDataImitation(filedir)
 
 print('TIPO')
 print(tipo)
+print('Quantidade camada oculta:')
+print(nets_number)
 
 batch_length = len(observations) - 1
 observations = np.array(observations, dtype=np.float32)
@@ -50,8 +55,18 @@ vec_circle_env = make_vec_env(lambda: circle_env, n_envs=1)
 print('vec_circle_env.observation_space')
 print(vec_circle_env.observation_space)
 print('vec_circle_env.action_space')
-print(vec_circle_env.observation_space)
+print(vec_circle_env.action_space)
 
+# custommlp = MlpPolicy()
+
+customFeedForward = ActorCriticPolicy(
+    observation_space=vec_circle_env.observation_space,
+    action_space=vec_circle_env.action_space,
+    # Set lr_schedule to max value to force error if policy.optimizer
+    # is used by mistake (should use self.optimizer instead).
+    lr_schedule=bc.ConstantLRSchedule(th.finfo(th.float32).max),
+    net_arch=[nets_number,nets_number]
+)
 
 if imitation_method == '1':
     bc_logger = logger.configure("/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrack_semobstaculo" + tipo + "/logs/", ["stdout", "csv", "log", "tensorboard"])
@@ -63,7 +78,8 @@ if imitation_method == '1':
         action_space=vec_circle_env.action_space,
         demonstrations=transitions,
         custom_logger=bc_logger,
-        batch_size=batch_length     
+        batch_size=batch_length,
+        policy=customFeedForward
     )
     bc_trainer.train(n_epochs=total_epochs, progress_bar=True)
 
@@ -99,7 +115,7 @@ else:
     print('gail_reward_net')
     print(gail_reward_net)
 
-    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=60, n_steps=120, ent_coef=0.0, n_epochs=10, vf_coef=0.5)
+    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=345, n_steps=414, ent_coef=0.001, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 

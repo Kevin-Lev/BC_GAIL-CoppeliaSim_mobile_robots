@@ -74,7 +74,7 @@ gail_reward_net = reward_nets.BasicRewardNet(
 
 gail_logger = logger.configure('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/logs/', ["stdout", "csv", "log", "tensorboard"])
 
-learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=1280, n_steps=1280, ent_coef=0.001, n_epochs=10, vf_coef=0.5)
+learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=64, n_steps=64, ent_coef=0.001, n_epochs=10, vf_coef=0.5)
 # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
 # learner = sb3.PPO("MlpPolicy", vec_long_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 

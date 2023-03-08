@@ -1,24 +1,37 @@
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
 from simulationScripts.file import readTrainAndTestActions
 import sys
 import glob
 
 
-def calculate_loss(expected_actions, predicted_actions):
+def calculate_mse(expected_actions, predicted_actions):
     loss = mean_squared_error(expected_actions, predicted_actions)
 
     print("Expected | Predicted")
     for i in range(len(expected_actions)):
         print(str(expected_actions[i]) + " | " + str(predicted_actions[i]))
 
-    print('loss')
+    print('MSE - mean_squared_error')
+    print(loss)
+
+    return loss
+
+def calculate_mae(expected_actions, predicted_actions):
+    loss = mean_absolute_error(expected_actions, predicted_actions)
+
+    # print("Expected | Predicted")
+    # for i in range(len(expected_actions)):
+    #     print(str(expected_actions[i]) + " | " + str(predicted_actions[i]))
+
+    print('MAE - mean_absolute_error')
     print(loss)
 
     return loss
 
 # expected_actions, predicted_actions = readTrainAndTestActions(sys.argv[1], sys.argv[2])
 
-# calculate_loss(expected_actions, predicted_actions)
+# 
 
 def mean_loss_simulations(train_path, test_path):
     loss_list = []
@@ -35,7 +48,7 @@ def mean_loss_simulations(train_path, test_path):
     for file in test_files:
         expected_actions, predicted_actions = readTrainAndTestActions(train_path, file)
 
-        loss = calculate_loss(expected_actions, predicted_actions)
+        loss = calculate_mse(expected_actions, predicted_actions)
         print('loss')
         print(loss)
         loss_list.append(loss)

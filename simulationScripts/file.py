@@ -4,7 +4,8 @@ import numpy as np
 import os
 
 def removeCharactersFromData(list_data):
-    list_data = list_data.replace('[', '').replace(']', '').replace(' ', '')
+    list_data = list_data.replace('[', '').replace(']', '').replace(' ', '') #ORIGINAL
+    # list_data = list_data.replace('[', '').replace(']', '').replace(' ', ',')
 
     return list_data
 
@@ -36,6 +37,17 @@ def separateSensorAndAction(sensor_data):
             light_list.append(sensor_data[i])
         else:
             sensor_list.append(sensor_data[i])
+    # print(sensor_list)
+    # print(light_list)
+    # print(action_list)
+    # for i in range(len(sensor_data)):
+    #     if i in [9, 10]: # antes era 9,10
+    #         # print(i)
+    #         action_list.append(sensor_data[i])
+    #     elif i == 0:
+    #         light_list.append(sensor_data[i])
+    #     else:
+    #         sensor_list.append(sensor_data[i])
     
     # print('sensor_list')
     # print(sensor_list[0])
@@ -121,7 +133,9 @@ def readEpuckDataImitation(filename):
     file = open(filename, 'r')
     simulation_data = file.read()
     checkpoints = simulation_data.split(';')
-    checkpoints.pop() # Remove string vazia que fica após o último ';' 
+    checkpoints.pop() # Remove string vazia que fica após o último ';'
+    print('len(checkpoints)') 
+    print(len(checkpoints)) 
 
     for check in checkpoints:
         tipo = ''
@@ -172,6 +186,8 @@ def readEpuckDataImitation(filename):
     # print(actions)
     observations.append(observations[len(observations) - 1]) # 28 + 1 no observation
 
+    print('TAMANHO OBSERVATIONS')
+    print(len(observations))
     return observations, actions, tipo
     
 
@@ -373,9 +389,6 @@ def readTrainAndTestActions(train_filepath, test_filepath):
                 last_valid_action = i - 1
             split_test_data = checkpoints_test_data[last_valid_action].split('|')
 
-        # print(split_train_data[2])
-        # print(split_test_data)
-
         train_jointSpeeds = split_train_data[2]
         test_jointSpeeds = split_test_data[2]
 
@@ -387,11 +400,11 @@ def readTrainAndTestActions(train_filepath, test_filepath):
         expected_actions.append([l_wheel_speed_train, r_wheel_speed_train])
         predicted_actions.append([l_wheel_speed_test ,r_wheel_speed_test])
 
-    # print("Expected actions:")
-    # print(expected_actions)
+    print("Expected actions:")
+    print(expected_actions)
 
-    # print("predicted_actions")
-    # print(predicted_actions)
+    print("predicted_actions")
+    print(predicted_actions)
 
     return expected_actions, predicted_actions
 
