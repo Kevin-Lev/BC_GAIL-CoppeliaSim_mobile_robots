@@ -14,14 +14,17 @@ from obstacles_env import ObstaclesTrack
 
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
 
-from simulationScripts.file import readEpuckDataImitation
+from simulationScripts.file import readEpuckDataImitation, readEpuckDataImitationOnlyDistance
 
 total_epochs = int(sys.argv[1])
 filedir = sys.argv[2]
 imitation_method = sys.argv[3]
 nets_number = int(sys.argv[4])
 
+# observations, actions, tipo = readEpuckDataImitationOnlyDistance(filedir)
 observations, actions, tipo = readEpuckDataImitation(filedir)
+print('observations')
+print(observations)
 # observations2, actions2, tipo = readEpuckDataImitation('simulationData/epuckObstaclestrack/withSensor/training/10_11_2022/epuck_obstaclesTrack_1.txt_filtered.txt')
 # observations3, actions3, tipo = readEpuckDataImitation('simulationData/epuckObstaclestrack/withSensor/training/10_11_2022/epuck_obstaclesTrack_2.txt_filtered.txt')
 # observations4, actions4, tipo = readEpuckDataImitation('simulationData/epuckObstaclestrack/withSensor/training/10_11_2022/epuck_obstaclesTrack_3.txt_filtered.txt')
@@ -143,7 +146,7 @@ else:
     print('gail_reward_net')
     print(gail_reward_net)
 
-    learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=64, n_steps=2048, ent_coef=0.0, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
+    learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=976, n_steps=976, ent_coef=0.001, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
     # learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 

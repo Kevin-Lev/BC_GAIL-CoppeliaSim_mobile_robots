@@ -3,7 +3,7 @@ from time import sleep
 import sys, numpy as np
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
 from zmqRemoteApi import RemoteAPIClient
-from simulationScripts.file import separateSensorAndAction, writeEpuckPosition, writeEpuckSimData, writeSimulationData
+from simulationScripts.file import separateSensorAndAction, writeEpuckPosition, writeEpuckSimData, writeEpuckSimDataOnlyDistance, writeSimulationData
 
 # np.set_printoptions(precision=4)
 
@@ -33,6 +33,9 @@ for i in range(qnt_simulacoes):
     elif sys.argv[2] == '3':
         loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_3.ttt')
         print('Carregou cena obstacles_track_small_3.ttt!')
+    elif sys.argv[2] == '4':
+        loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_1_onlyDistanceSensor.ttt')
+        print('Carregou cena obstacles_track_small_1_onlyDistanceSensor.ttt!')
     else:
         loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small.ttt')
         print('Carregou cena obstacles_track_small.ttt!')
@@ -105,7 +108,7 @@ for i in range(qnt_simulacoes):
             # light_data = [np.float32(light_data[0][0]), np.float32(light_data[0][1]), np.float32(light_data[0][2])]
             # sensor_data = [np.float32(sensor_data[0]), np.float32(sensor_data[1]), np.float32(sensor_data[2]), np.float32(sensor_data[3]), np.float32(sensor_data[4]), np.float32(sensor_data[5]), np.float32(sensor_data[6]), np.float32(sensor_data[7])]
             # action_data = [np.float32(action_data[0]), np.float32(action_data[1])]
-            print(light_data)
+            # print(light_data)
             print(sensor_data)
             print(action_data)
             # light_data, sensor_data, action_data = np.float32(light_data), np.float32(sensor_data), np.float32(action_data)
@@ -117,7 +120,8 @@ for i in range(qnt_simulacoes):
             # print('float(format(pos_y, ".1f"))')
             # print(float(format(pos_y, ".1f")))
             writeEpuckPosition(fileDirectory_pos, positions)
-            writeEpuckSimData(fileDirectory, light_data, sensor_data, action_data)
+            writeEpuckSimDataOnlyDistance(fileDirectory, sensor_data, action_data)
+            # writeEpuckSimData(fileDirectory, light_data, sensor_data, action_data)
         except Exception as e:
             print('Erro! Ainda está aguardando o buffer...', e)
 

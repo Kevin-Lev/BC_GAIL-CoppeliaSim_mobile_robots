@@ -49,10 +49,10 @@ class CircleTrack(gym.Env):
 
         obs_lows = np.array([0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00], dtype=np.float32)
         obs_highs = np.array([0.10, 0.10, 0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05], dtype=np.float32)
-        act_lows = np.array([lowest_left, lowest_right], dtype=np.float32) 
-        act_highs = np.array([highest_left, highest_right], dtype=np.float32) 
-        # act_lows = np.array([0.0, 0.0], dtype=np.float32) 
-        # act_highs = np.array([3.40, 3.40], dtype=np.float32) 
+        # act_lows = np.array([lowest_left, lowest_right], dtype=np.float32) 
+        # act_highs = np.array([highest_left, highest_right], dtype=np.float32) 
+        act_lows = np.array([0.0, 0.0], dtype=np.float32) 
+        act_highs = np.array([4.5, 4.5], dtype=np.float32) 
 
         self.observation_space = spaces.Box(low=obs_lows, high=obs_highs, dtype=np.float32)
 

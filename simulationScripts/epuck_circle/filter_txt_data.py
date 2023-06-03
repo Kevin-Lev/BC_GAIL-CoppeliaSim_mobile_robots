@@ -1,7 +1,40 @@
 import sys
 
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
-from simulationScripts.file import writeEpuckSimData
+from simulationScripts.file import writeEpuckSimData, writeEpuckSimDataOnlyDistance
+
+def readEpuckDataImitationOnlyDistance(filename):
+    filtered_checks = []
+    file = open(filename, 'r')
+    simulation_data = file.read()
+    checkpoints = simulation_data.split(';')
+    checkpoints.pop() # Remove string vazia que fica após o último ';' 
+
+    for check in checkpoints:
+        if check not in filtered_checks:
+            filtered_checks.append(check)
+
+    print('checkpoints')
+    print(len(checkpoints))
+    print('filtered_checks')
+    print(len(filtered_checks))
+    i = 0
+    for check in filtered_checks:
+        i += 1
+        wheels = []
+        splitData = check.split('|')
+
+        if splitData[len(splitData) - 1] == '':
+            splitData.pop()
+
+        # lights = splitData[0]
+        sensor_clear = []
+        sensors = splitData[0].split(',')
+        # print('sensors', sensors)
+        for sen in sensors:
+            sensor_clear.append(float(sen))
+        wheels = splitData[1]
+        writeEpuckSimDataOnlyDistance(filename + '_filtered.txt', sensor_clear, wheels)
 
 def readEpuckDataImitation(filename):
     filtered_checks = []
@@ -56,7 +89,7 @@ def specialFilterEpuck(filename):
     for filtered in filtered_checks:
         light_sensor, distance_sensor, wheel_speed = filtered.split('|')
 
-        if distance_sensor == '0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05' and len(ultra_checks) < 5:
+        if distance_sensor == '0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05' and len(ultra_checks) < 10:
            ultra_checks.append(filtered)
 
         if filtered not in ultra_checks and distance_sensor != '0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05':
@@ -87,6 +120,7 @@ def specialFilterEpuck(filename):
 
 
 if sys.argv[2] == '1':
+    # readEpuckDataImitationOnlyDistance(sys.argv[1])
     readEpuckDataImitation(sys.argv[1])
 elif sys.argv[2] == '2':
     specialFilterEpuck(sys.argv[1])

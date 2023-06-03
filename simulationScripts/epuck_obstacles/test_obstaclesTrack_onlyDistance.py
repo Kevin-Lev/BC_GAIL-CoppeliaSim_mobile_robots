@@ -26,11 +26,11 @@ for i in range(qnt_simulacoes):
             sleep(0.1)
 
 
-    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_test.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_test_onlyDistanceSensor2.ttt')
     # loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_test.ttt')
 
     if loadedScene != -1:
-        print('Carregou cena epuck_obstacles_track_small_test.ttt!')
+        print('Carregou cena epuck_obstacles_track_small_test_onlyDistanceSensor2.ttt!')
     else:
         print('falha ao tentar carregar cena!')
 
@@ -44,12 +44,14 @@ for i in range(qnt_simulacoes):
 
     if sys.argv[2] == '1':
         print('Behavioral Cloning selecionada para as predições!')
-        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor/bc_policy.zip')
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor_onlyDistance/bc_policy.zip')
+        # imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor/bc_policy.zip')
         fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
         fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/BC/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor/gail_policy.zip')
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor_onlyDistance/gail_policy.zip')
+        # imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor/gail_policy.zip')
         fileDirectory = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstaclesTrack_' + str(i) + '.txt'
         fileDirectory_pos = 'simulationData/epuckObstaclestrack/withSensor/test/GAIL/' + today_date + '/epuck_obstacles_positions_' + str(i) + '.txt'
 
@@ -62,6 +64,14 @@ for i in range(qnt_simulacoes):
     right_motor_handle = sim.getObjectHandle('ePuck_rightJoint')
     positions = sim.getObjectPosition(epuck_handle, -1)
     orientation = sim.getObjectOrientation(epuck_handle, -1)
+    senHandles = []
+
+    for i in range(1, 9):
+        print('ePuck_proxSen' + str(i))
+        handle = sim.getObjectHandle('ePuck_proxSen' + str(i))
+        senHandles.append(handle)
+        
+    print('senHandles: ', senHandles)
 
     pos_x = positions[0]
     pos_y = positions[1]
@@ -82,14 +92,21 @@ for i in range(qnt_simulacoes):
         i += 1
         print('iteração atual: ' + str(i))
         try:
-            sensor_and_wheel = sim.getStringSignal('sensor_and_wheel')
-            sensor_and_wheel = sim.unpackTable(sensor_and_wheel)
-            light_data, sensor_data, act = separateSensorAndAction(sensor_and_wheel[0])
+            sensor_data = []
+            for handle in senHandles:
+                sim.handleProximitySensor(handle)
+                # print(sim.handleProximitySensor(handle))
+                res = sim.readProximitySensor(handle)
+                #    res = sim.handleProximitySensor(handle)
+                # if handle == 'ePuck_proxSen4':
+                # print('res: ', res[1])
+                sensor_data.append(res[1])
+                #    print('dist: ', dist)
             positions = sim.getObjectPosition(epuck_handle, -1)
             pos_x = positions[0]
             pos_y = positions[1]
-            # pred = imitation_policy.predict([sensor_data[0], sensor_data[1], sensor_data[2], sensor_data[3], sensor_data[4], sensor_data[5], sensor_data[6], sensor_data[7]], deterministic=True)
-            pred = imitation_policy.predict([light_data[0][0], light_data[0][1], light_data[0][2], sensor_data[0], sensor_data[1], sensor_data[2], sensor_data[3], sensor_data[4], sensor_data[5], sensor_data[6], sensor_data[7]], deterministic=True)
+            pred = imitation_policy.predict([sensor_data[0], sensor_data[1], sensor_data[2], sensor_data[3], sensor_data[4], sensor_data[5], sensor_data[6], sensor_data[7]], deterministic=True)
+            # pred = imitation_policy.predict([light_data[0][0], light_data[0][1], light_data[0][2], sensor_data[0], sensor_data[1], sensor_data[2], sensor_data[3], sensor_data[4], sensor_data[5], sensor_data[6], sensor_data[7]], deterministic=True)
             # pred = np.float16(pred)
             pred = pred[0].tolist()
             # pred = [np.float16(pred[0]), np.float16(pred[1])]
@@ -98,10 +115,12 @@ for i in range(qnt_simulacoes):
             sim.setJointTargetVelocity(left_motor_handle, pred[0])    
             sim.setJointTargetVelocity(right_motor_handle, pred[1])   
             writeEpuckPosition(fileDirectory_pos, positions)
-            # writeEpuckSimDataOnlyDistance(fileDirectory, sensor_data, [pred[0], pred[1]])
-            writeEpuckSimData(fileDirectory, light_data, sensor_data, [pred[0], pred[1]])
-        except:
+            writeEpuckSimDataOnlyDistance(fileDirectory, sensor_data, [pred[0], pred[1]])
+            # writeEpuckSimData(fileDirectory, light_data, sensor_data, [pred[0], pred[1]])
+        except Exception as e:
+            print(e)
             print('Erro! Ainda está aguardando o buffer...')
+            # except Exception as e: print(e)
         
 
     print('PAROU')

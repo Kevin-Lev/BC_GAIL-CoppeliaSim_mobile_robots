@@ -56,6 +56,31 @@ def separateSensorAndAction(sensor_data):
 
     return light_list, sensor_list, action_list
 
+def writeEpuckSimDataOnlyDistance(filename, sensor_data, wheel_data):
+    createDirectories(filename)
+
+    # print('wheel_data ANTES')
+    # print(wheel_data)
+
+    # light_data = removeCharactersFromData(str(light_data))
+    sensor_data = removeCharactersFromData(str(sensor_data))
+    wheel_data = removeCharactersFromData(str(wheel_data))
+
+   
+    # print('sensor_data')
+    # print(sensor_data)
+    # print('wheel_data')
+    # print(wheel_data)
+
+    file = open(filename, 'a+')
+    file.write(str(sensor_data) + '|')
+    file.write(str(wheel_data) + ';')
+
+    file.close()
+
+    return
+
+
 def writeEpuckSimData(filename, light_data, sensor_data, wheel_data):
     createDirectories(filename)
 
@@ -126,6 +151,67 @@ def writeSimulationData(filename, position_data, orientation_data, wheel_data, s
         file.write(';')
 
     file.close()
+
+def readEpuckDataImitationOnlyDistance(filename):
+    observations = []
+    actions = []
+    file = open(filename, 'r')
+    simulation_data = file.read()
+    checkpoints = simulation_data.split(';')
+    checkpoints.pop() # Remove string vazia que fica após o último ';'
+    print('len(checkpoints)') 
+    print(len(checkpoints)) 
+
+    for check in checkpoints:
+        tipo = ''
+        obs = []
+        wheels = []
+        splitData = check.split('|')
+
+        if splitData[len(splitData) - 1] == '':
+            splitData.pop()
+
+        # lights = splitData[0]
+        sensors = splitData[0].split(',')
+        wheels = splitData[1]
+
+        # sensors = sensors.split(',')
+        # print('sensors')
+        # print(sensors)
+        # print('wheels')
+        # print(wheels)
+
+        # light_1 = float(lights.split(',')[0])
+        # light_2 = float(lights.split(',')[1])
+        # light_3 = float(lights.split(',')[2])
+        # obs.append(light_1)
+        # obs.append(light_2)
+        # obs.append(light_3)
+
+        # print(len(sensors))
+        for i in range(len(sensors)):
+            sen = float(sensors[i])
+            obs.append(sen)
+
+        l_wheel_speed = float(wheels.split(',')[0])
+        r_wheel_speed = float(wheels.split(',')[1])
+
+        observations.append(obs)
+        actions.append([l_wheel_speed, r_wheel_speed])
+
+        obs = []
+    
+    tipo = 'withSensor'
+    # print('observations')
+    # print(observations)
+    # print('actions')
+    # print(actions)
+    observations.append(observations[len(observations) - 1]) # 28 + 1 no observation
+
+    print('TAMANHO OBSERVATIONS')
+    print(len(observations))
+    return observations, actions, tipo
+
 
 def readEpuckDataImitation(filename):
     observations = []

@@ -44,11 +44,13 @@ for i in range(qnt_simulacoes):
     if sys.argv[2] == '1':
         print('Behavioral Cloning selecionada para as predições!')
         imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckCircletrackwithSensor/bc_policy.zip')
+        # imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor_poucaAmostra/bc_policy.zip')
         fileDirectory = 'simulationData/epuckCircletrack/withSensor/test/BC/' + today_date + '/epuck_circleTrack_' + str(i) + '.txt'
         fileDirectory_pos = 'simulationData/epuckCircletrack/withSensor/test/BC/' + today_date + '/epuck_circle_positions_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
         imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckCircletrackwithSensor/gail_policy.zip')
+        # imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor_poucasAmostras/gail_policy.zip')
         fileDirectory = 'simulationData/epuckCircletrack/withSensor/test/GAIL/' + today_date + '/epuck_circleTrack_' + str(i) + '.txt'
         fileDirectory_pos = 'simulationData/epuckCircletrack/withSensor/test/GAIL/' + today_date + '/epuck_circle_positions_' + str(i) + '.txt'
 

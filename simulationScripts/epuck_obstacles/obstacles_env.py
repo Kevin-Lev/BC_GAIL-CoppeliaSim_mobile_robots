@@ -7,7 +7,7 @@ from gym import spaces, logger
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
 
 
-from simulationScripts.file import readDataImitation, readEpuckDataImitation
+from simulationScripts.file import readDataImitation, readEpuckDataImitation, readEpuckDataImitationOnlyDistance
 
 
 class ObstaclesTrack(gym.Env):
@@ -19,6 +19,7 @@ class ObstaclesTrack(gym.Env):
 
         # observations, actions, tipo = readDataImitation('simulationData/epuckCircle/withOrientation/training/10_4_2022/epuck_circle_0.txt')
         observations, actions, tipo = readEpuckDataImitation(filedir)
+        # observations, actions, tipo = readEpuckDataImitationOnlyDistance(filedir)
         # observations, actions, tipo = readEpuckDataImitation('simulationData/epuckObstaclesTrack/withSensor/training/19_4_2022_definitivo/epuck_circle_0.txt')
         observations = np.array(observations, dtype=np.float32)
         actions = np.array(actions, dtype=np.float32)
@@ -32,11 +33,19 @@ class ObstaclesTrack(gym.Env):
         self.next_obs = transitions.next_obs
         self.dones = transitions.dones
 
+        # obs_lows = np.array([0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00], dtype=np.float32)
+        # obs_highs = np.array([7.00, 7.00, 7.00, 7.00, 7.00, 7.00, 7.00, 7.00], dtype=np.float32)
+        # act_lows = np.array([0.0, 0.0], dtype=np.float32) 
+        # act_highs = np.array([4.5, 4.5], dtype=np.float32) 
         obs_lows = np.array([0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00], dtype=np.float32)
         obs_highs = np.array([0.10, 0.10, 0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05], dtype=np.float32)
         act_lows = np.array([0.0, 0.0], dtype=np.float32) 
+        act_highs = np.array([4.5, 4.5], dtype=np.float32) 
+        # obs_lows = np.array([0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00], dtype=np.float32)
+        # obs_highs = np.array([0.10, 0.10, 0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05], dtype=np.float32)
+        # act_lows = np.array([0.0, 0.0], dtype=np.float32) 
         # act_highs = np.array([4.5, 4.5], dtype=np.float32) 
-        act_highs = np.array([2.0, 2.0], dtype=np.float32) 
+        # act_highs = np.array([2.0, 2.0], dtype=np.float32) 
 
         self.observation_space = spaces.Box(low=obs_lows, high=obs_highs, dtype=np.float32)
 

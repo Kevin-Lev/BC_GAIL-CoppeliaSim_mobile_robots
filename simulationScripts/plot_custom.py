@@ -64,12 +64,18 @@ def plotAllPaths(ideal_path, bc_path, gail_path):
         posesx_gail.append(gail_positions[i][0])
         posesy_gail.append(gail_positions[i][1])
 
-    ax.plot(posesx_ideal, posesy_ideal, color="black", label='Expert')
-    ax.plot(posesx_bc, posesy_bc, color="blue", label='BC')
-    ax.plot(posesx_gail, posesy_gail, color="red", label='GAIL')
+# for z track
+    ax.plot(posesy_ideal, posesx_ideal, color="black", label='Instrutor')
+    ax.plot(posesy_bc, posesx_bc, color="blue", label='CC')
+    ax.plot(posesy_gail, posesx_gail, color="red", label='GAIL')
+    # ------------------------
+# for the rest of the tracks
+    # ax.plot(posesx_ideal, posesy_ideal, color="black", label='Instrutor')
+    # ax.plot(posesx_bc, posesy_bc, color="blue", label='CC')
+    # ax.plot(posesx_gail, posesy_gail, color="red", label='GAIL')
     ax.legend()
 
-    ax.invert_xaxis()
+    # ax.invert_xaxis()
     ax.invert_yaxis()
 
     # Turn off tick labels
@@ -90,18 +96,26 @@ def plotErrorMetrics(err_file_path):
     print('data_float')
     print(data_float)
 
-    c1_metrics, c2_metrics, c3_metrics, c4_metrics = np.array_split(data_float, 4)
+    c1_metrics = np.array(data_float)
+    # c1_metrics = np.array_split(data_float, 1)
+    # c1_metrics, c2_metrics, c3_metrics, c4_metrics = np.array_split(data_float, 4)
 
-    print('c1_metrics, c2_metrics, c3_metrics, c4_metrics, ')
-    print(c1_metrics, c2_metrics, c3_metrics, c4_metrics )
+    print('c1_metrics: ', c1_metrics)
+    # print('c1_metrics, c2_metrics, c3_metrics, c4_metrics, ')
+    # print(c1_metrics, c2_metrics, c3_metrics, c4_metrics )
 
     fig, ax = plt.subplots()
     # ax.bar(x=['C1', 'C2', 'C3', 'C4', 'C5', 'C6'], height=20)
-    cenarios = ['S1', 'S2', 'S3', 'S4']
-    bc_mse_list = [c1_metrics[0], c2_metrics[0], c3_metrics[0], c4_metrics[0]]
-    bc_mae_list = [c1_metrics[1], c2_metrics[1], c3_metrics[1], c4_metrics[1]]
-    gail_mse_list = [c1_metrics[2], c2_metrics[2], c3_metrics[2], c4_metrics[2]]
-    gail_mae_list = [c1_metrics[3], c2_metrics[3], c3_metrics[3], c4_metrics[3]]
+    # cenarios = ['C5', 'C6', 'C7', 'C8']
+    cenarios = ['C9']
+    bc_mse_list = [c1_metrics[0]]
+    bc_mae_list = [c1_metrics[1]]
+    gail_mse_list = [c1_metrics[2]]
+    gail_mae_list = [c1_metrics[3]]
+    # bc_mse_list = [c1_metrics[0], c2_metrics[0], c3_metrics[0], c4_metrics[0]]
+    # bc_mae_list = [c1_metrics[1], c2_metrics[1], c3_metrics[1], c4_metrics[1]]
+    # gail_mse_list = [c1_metrics[2], c2_metrics[2], c3_metrics[2], c4_metrics[2]]
+    # gail_mae_list = [c1_metrics[3], c2_metrics[3], c3_metrics[3], c4_metrics[3]]
     # Ygirls = [10,20,20,40, 50, 60]
     # Zboys = [20,30,25,30, 55, 78]
 
@@ -116,8 +130,8 @@ def plotErrorMetrics(err_file_path):
     # plt.bar(x='C1', height=15)
 
     ax.set_xticks(X_axis, cenarios)
-    ax.set_xlabel('Scenarios', fontsize=18)
-    ax.set_ylabel('Metric Value', fontsize=18)
+    ax.set_xlabel('Cenários', fontsize=18)
+    ax.set_ylabel('Valor da Métrica', fontsize=18)
     ax.bar_label(bars1, padding=6, fmt="%.5f", fontsize=12)
     ax.bar_label(bars2, padding=6, fmt="%.5f", fontsize=12)
     ax.bar_label(bars3, padding=6, fmt="%.5f", fontsize=12)

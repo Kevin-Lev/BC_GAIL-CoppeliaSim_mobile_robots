@@ -118,7 +118,7 @@ else:
     print(gail_reward_net)
 
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=171*2, n_steps=171*2, ent_coef=0.0, n_epochs=10, vf_coef=0.5)
-    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=57, n_steps=342, ent_coef=0.001, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
+    learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=64, n_steps=2048, ent_coef=0.0, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_circle_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -126,7 +126,7 @@ else:
     bc_policy = gail.GAIL(
         venv=vec_circle_env,
         demonstrations=transitions,
-        demo_batch_size=batch_length,
+        demo_batch_size=64,
         gen_algo=learner,
         reward_net=gail_reward_net,
         custom_logger=gail_logger

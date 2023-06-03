@@ -26,7 +26,7 @@ for i in range(qnt_simulacoes):
             sleep(0.1)
 
 
-    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/e_puck_z_track_test.ttt')
+    loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/e_puck_z_track_test2.ttt')
 
     if loadedScene != -1:
         print('Carregou cena epuck_z_track_test.ttt!')
@@ -43,12 +43,14 @@ for i in range(qnt_simulacoes):
 
     if sys.argv[2] == '1':
         print('Behavioral Cloning selecionada para as predições!')
-        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckZtrackwithSensor/bc_policy.zip')
+        # imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckZtrackwithSensor/bc_policy.zip')
+        imitation_policy = bc.reconstruct_policy('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/BC/epuckObstaclestrackwithSensor_poucaAmostra/bc_policy.zip')
         fileDirectory = 'simulationData/epuckZtrack/withSensor/test/BC/' + today_date + '/epuck_zTrack_' + str(i) + '.txt'
         fileDirectory_pos = 'simulationData/epuckZtrack/withSensor/test/BC/' + today_date + '/epuck_z_positions_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckZtrackwithSensor/gail_policy.zip')
+        # imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckZtrackwithSensor/gail_policy.zip')
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/epuckObstaclestrackwithSensor_poucasAmostras/gail_policy.zip')
         fileDirectory = 'simulationData/epuckZtrack/withSensor/test/GAIL/' + today_date + '/epuck_zTrack_' + str(i) + '.txt'
         fileDirectory_pos = 'simulationData/epuckZtrack/withSensor/test/GAIL/' + today_date + '/epuck_z_positions_' + str(i) + '.txt'
 

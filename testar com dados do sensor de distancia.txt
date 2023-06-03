@@ -1,0 +1,53 @@
+testar com dados do sensor de distancia apenas + fazer o gail funcionar
+
+experimentos não foram tao favoraiveis pro gail, em teoria mas sim pra CC
+
+diminuir quantidade de amostras pra CC até a CC falhar, e usar essa mesma quantidade pra GAIL.
+
+Plotar gráficos de treinamento (CC/GAIL)
+
+realizar experimentos:
+    - um removendo a luminosidade e deixando só o sensor de distância (para o ambiente maior)
+       - distancia dos feixes do sensor: 5.5400
+       - range[m] original: 0.0400
+
+       GAIL: 4024 n_steps e 2012 batch_size
+       BC: 4024 batch size
+
+    - um diminuindo a quantidade de amostras, deixando a cc falhar e 
+
+        GAIL: 976 n_steps e 976 batch_size e 9.760.000 total_timesteps
+        CC: 976 batch_size e 100.000 timesteps
+
+    - para uma trajetória diferente, sem luminosidade e numero reduzido de amostras
+
+ - circleTrack poucaAmostra:
+    filtrado tamanho: 117
+    timesteps: 70.000
+
+ - obstaclesGeneralized poucaAmostra:
+    - path1: 117
+    - path2: 122
+    - path3: 845
+
+- zTrackGeneralized poucaAmostra:
+    - path1: 117
+    - path2: 77
+    - path3: 123
+
+- não colocar no texto, colocar apenas no slide da apresentação
+
+- no texto, sempre usar o acrônimo GAIL, e citar
+
+- Deixar as siglas de acordo com o idioma usado (talvez?)
+
+- Porque usar gail/cc ao inves do controlador braitenberg?
+     - r: o modelo gail/cc  não substitui e não é melhor que o original, mas o seu uso foi feito pra "facilitar a vida", ao inves de usar um teclado ou joystick. 
+
+- braitenberg foi usado também pois não há registros de trabalhos acadêmicos que usaram aprendizados de imitação para aprender comportamento de veículo de braitenberg.
+
+- colocar o gail em trabalhos futuros e justificar as possíveis causas de falhas.
+
+- aprendizado por imitação supervisionado engloba CC, gail, Dagger e outros. e não apenas CC.
+
+- PLAVRA CHAVE DO TRABALHO: "Investigação" em um problema específico (navegação de robôs móveis).

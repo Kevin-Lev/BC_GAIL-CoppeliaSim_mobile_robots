@@ -14,26 +14,26 @@ class ObstaclesTrackGeneralized(gym.Env):
     """Custom Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, filedir1, filedir2):
+    def __init__(self, filedir1, filedir2, filedir3):
         super(ObstaclesTrackGeneralized, self).__init__()
 
         observations1, actions1, _ = readEpuckDataImitation(filedir1)
         observations2, actions2, _ = readEpuckDataImitation(filedir2)
-        # observations3, actions3, _ = readEpuckDataImitation(filedir3)
+        observations3, actions3, _ = readEpuckDataImitation(filedir3)
         
         observations1 = np.array(observations1, dtype=np.float32)
         actions1 = np.array(actions1, dtype=np.float32)
         observations2 = np.array(observations2, dtype=np.float32)
         actions2 = np.array(actions2, dtype=np.float32)
-        # observations3 = np.array(observations3, dtype=np.float32)
-        # actions3 = np.array(actions3, dtype=np.float32)
+        observations3 = np.array(observations3, dtype=np.float32)
+        actions3 = np.array(actions3, dtype=np.float32)
 
         trajectory = types.Trajectory(obs=observations1, acts=actions1, infos=None, terminal=True)
         trajectory2 = types.Trajectory(obs=observations2, acts=actions2, infos=None, terminal=True)
-        # trajectory3 = types.Trajectory(obs=observations3, acts=actions3, infos=None, terminal=True)
+        trajectory3 = types.Trajectory(obs=observations3, acts=actions3, infos=None, terminal=True)
 
-        transitions = rollout.flatten_trajectories([trajectory, trajectory2])
-        # transitions = rollout.flatten_trajectories([trajectory, trajectory2, trajectory3])
+        # transitions = rollout.flatten_trajectories([trajectory, trajectory2])
+        transitions = rollout.flatten_trajectories([trajectory, trajectory2, trajectory3])
 
         self.obs = transitions.obs
         self.acts = transitions.acts
@@ -43,7 +43,7 @@ class ObstaclesTrackGeneralized(gym.Env):
         obs_lows = np.array([0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00], dtype=np.float32)
         obs_highs = np.array([0.10, 0.10, 0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05], dtype=np.float32)
         act_lows = np.array([0.0, 0.0], dtype=np.float32) 
-        act_highs = np.array([2.0, 2.0], dtype=np.float32) 
+        act_highs = np.array([4.5, 4.5], dtype=np.float32) 
 
         self.observation_space = spaces.Box(low=obs_lows, high=obs_highs, dtype=np.float32)
 

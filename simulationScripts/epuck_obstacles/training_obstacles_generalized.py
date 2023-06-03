@@ -20,14 +20,14 @@ from simulationScripts.file import readEpuckDataImitation
 total_epochs = int(sys.argv[1])
 filedir1 = sys.argv[2]
 filedir2 = sys.argv[3]
-# filedir3 = sys.argv[4]
+filedir3 = sys.argv[4]
 imitation_method = sys.argv[5]
 nets_number = int(sys.argv[6])
 
 
 observations1, actions1, tipo1 = readEpuckDataImitation(filedir1)
 observations2, actions2, tipo2 = readEpuckDataImitation(filedir2)
-# observations3, actions3, tipo3 = readEpuckDataImitation(filedir3)
+observations3, actions3, tipo3 = readEpuckDataImitation(filedir3)
 
 print('TIPO')
 print(tipo1)
@@ -39,12 +39,14 @@ observations1 = np.array(observations1, dtype=np.float32)
 actions1 = np.array(actions1, dtype=np.float32)
 
 batch_length2 = len(observations2) - 1
+print('batch_length2')
+print(batch_length2)
 observation2 = np.array(observations2, dtype=np.float32)
 actions2 = np.array(actions2, dtype=np.float32)
 
-# batch_length3 = len(observations3) - 1
-# observations3 = np.array(observations3, dtype=np.float32)
-# actions3 = np.array(actions3, dtype=np.float32)
+batch_length3 = len(observations3) - 1
+observations3 = np.array(observations3, dtype=np.float32)
+actions3 = np.array(actions3, dtype=np.float32)
 
 print('batch_length1')
 print(batch_length1)
@@ -55,19 +57,19 @@ print(imitation_method)
 
 tes1 = types.Trajectory(obs=observations1, acts=actions1, infos=None, terminal=True)
 tes2 = types.Trajectory(obs=observations2, acts=actions2, infos=None, terminal=True)
-# tes3 = types.Trajectory(obs=observations3, acts=actions3, infos=None, terminal=True)
+tes3 = types.Trajectory(obs=observations3, acts=actions3, infos=None, terminal=True)
 
 # print('tes')
 # print(tes)
 
-transitions = rollout.flatten_trajectories([tes1, tes2])
-# transitions = rollout.flatten_trajectories([tes1, tes2, tes3])
+# transitions = rollout.flatten_trajectories([tes1, tes2])
+transitions = rollout.flatten_trajectories([tes1, tes2, tes3])
 
 # print('transitions')
 # print(len(transitions))
 # print(transitions)
 
-obstacles_env = ObstaclesTrackGeneralized(filedir1, filedir2)
+obstacles_env = ObstaclesTrackGeneralized(filedir1, filedir2, filedir3)
 # obstacles_env = ObstaclesTrackGeneralized(filedir1, filedir2, filedir3)
 vec_obstacles_env = make_vec_env(lambda: obstacles_env, n_envs=1)
 
@@ -134,7 +136,7 @@ else:
     print('gail_reward_net')
     print(gail_reward_net)
 
-    learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=32, n_steps=1024, ent_coef=0.0, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
+    learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=117, n_steps=117, ent_coef=0.0, n_epochs=10, vf_coef=0.5, policy_kwargs={"net_arch" : [nets_number, nets_number]})
     # learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=6, n_steps=6, ent_coef=0.01, n_epochs=6, vf_coef=0.2)
     # learner = sb3.PPO("MlpPolicy", vec_obstacles_env, verbose=1, batch_size=3, n_steps=3, n_epochs=1)
 
@@ -142,7 +144,7 @@ else:
     bc_policy = gail.GAIL(
         venv=vec_obstacles_env,
         demonstrations=transitions,
-        demo_batch_size=batch_length2,
+        demo_batch_size=117,
         gen_algo=learner,
         reward_net=gail_reward_net,
         custom_logger=gail_logger

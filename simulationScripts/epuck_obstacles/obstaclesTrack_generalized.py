@@ -33,7 +33,7 @@ for i in range(qnt_simulacoes):
         loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small_3.ttt')
         print('Carregou cena obstacles_track_small_3.ttt.ttt!')
     else:
-        loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/obstacles_track_small.ttt')
+        loadedScene = sim.loadScene('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationScenes/epuck_obstacles_track_small.ttt')
         print('Carregou cena obstacles_track_small.ttt!')
     
   
