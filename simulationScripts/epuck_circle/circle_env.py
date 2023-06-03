@@ -32,10 +32,27 @@ class CircleTrack(gym.Env):
         self.next_obs = transitions.next_obs
         self.dones = transitions.dones
 
+        highest_left = 4.0
+        highest_right = 4.0
+        lowest_left = -1.0
+        lowest_right = -1.0
+        for act in actions:
+           if act[0] > highest_left:
+                highest_left = act[0]
+           if act[1] > highest_right:
+                highest_right = act[1]
+           if act[0] < lowest_left:
+                lowest_left = act[0]
+           if act[1] < lowest_right:
+                lowest_right = act[1]
+
+
         obs_lows = np.array([0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00], dtype=np.float32)
         obs_highs = np.array([0.10, 0.10, 0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05], dtype=np.float32)
+        # act_lows = np.array([lowest_left, lowest_right], dtype=np.float32) 
+        # act_highs = np.array([highest_left, highest_right], dtype=np.float32) 
         act_lows = np.array([0.0, 0.0], dtype=np.float32) 
-        act_highs = np.array([2.0, 2.0], dtype=np.float32) 
+        act_highs = np.array([4.5, 4.5], dtype=np.float32) 
 
         self.observation_space = spaces.Box(low=obs_lows, high=obs_highs, dtype=np.float32)
 
@@ -74,13 +91,13 @@ class CircleTrack(gym.Env):
         # print('DONE')
         # print(self.current_state_done)
 
+        self.current_state_done = self.dones[self.transition_iteration]
 
         if self.current_state_done == False:
             self.transition_iteration += 1
             self.current_state = self.obs[self.transition_iteration]
             self.current_state_expected_action = self.acts[self.transition_iteration]
             self.next_state = self.next_obs[self.transition_iteration]
-            self.current_state_done = self.dones[self.transition_iteration]
 
             # if self.current_state_done == True:
             #     self.current_state_done = self.dones[self.transition_iteration]

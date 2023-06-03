@@ -2,6 +2,7 @@ from time import sleep
 from datetime import datetime, timedelta
 from zmqRemoteApi import RemoteAPIClient
 from simulationScripts.file import writeSimulationData
+import sys
 
 client = RemoteAPIClient('localhost',23000)
 
@@ -16,12 +17,28 @@ if sim.getSimulationState()!=sim.simulation_stopped:
     while sim.getSimulationState()!=sim.simulation_stopped:
         sleep(0.1)
 
-loadedScene = sim.loadScene('../cenas/obstacles_track.ttt')
+loadedScene = ''
 
-if loadedScene != -1:
-    print('Carregou cena obstacles_track.ttt!')
+print('sys.argv[2]')
+print(sys.argv[2])
+
+if sys.argv[2] == '1':
+    loadedScene = sim.loadScene('simulationScenes/epuck_obstacles_track_small_1.ttt')
+    print('Carregou cena obstacles_track_small_1.ttt!')
+elif sys.argv[2] == '2':
+    loadedScene = sim.loadScene('simulationScenes/epuck_obstacles_track_small_2.ttt')
+    print('Carregou cena obstacles_track_small_2.ttt!')
+elif sys.argv[2] == '3':
+    loadedScene = sim.loadScene('simulationScenes/epuck_obstacles_track_small_3.ttt')
+    print('Carregou cena obstacles_track_small_3.ttt.ttt!')
 else:
-    print('falha ao tentar carregar cena!')
+    loadedScene = sim.loadScene('simulationScenes/epuck_obstacles_track_small.ttt')
+    print('Carregou cena obstacles_track_small.ttt!')
+
+# if loadedScene != -1:
+#     print('Carregou cena obstacles_track.ttt!')
+# else:
+#     print('falha ao tentar carregar cena!')
 
 # Run a simulation in synchronous mode:
 # client.setStepping(True)

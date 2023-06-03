@@ -52,7 +52,7 @@ for i in range(qnt_simulacoes):
         fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/BC/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
     else:
         print('GAIL selecionada para as predições!')
-        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/best_gail/gail_policy_melhor_versao.zip')
+        imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/gail_policy.zip')
         # imitation_policy = PPO.load('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots/simulationData/GAIL/pioneerLongtrackwithOrientation/gail_policy.zip')
         fileDirectory = 'simulationData/pioneerLongTrack/withOrientation/test/GAIL/' + today_date + '/pioneer_longTrack_' + str(i) + '.txt'
 
@@ -78,6 +78,7 @@ for i in range(qnt_simulacoes):
     # print(obs_data)
    
     # ativa os motores com velocidade 2.0
+    orientation[2] = abs(orientation[2])
     pred = imitation_policy.predict([positions[0], positions[1], orientation[2]], deterministic=True)
     # pred = imitation_policy.predict(obs_data)
     pred = pred[0].tolist()
@@ -117,15 +118,15 @@ for i in range(qnt_simulacoes):
     # Momento de rotação do robô, diminuindo a velocidade do motor referente a direção desejada
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)
-    # orientation[2] = abs(orientation[2])
-    # jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
-    print(positions[0])
-    print(positions[1])
-    print('orientation[2] before')
-    print(orientation[2])
     orientation[2] = abs(orientation[2])
-    print('orientation[2]')
-    print(orientation[2])
+    # jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
+    # print(positions[0])
+    # print(positions[1])
+    # print('orientation[2] before')
+    # print(orientation[2])
+    # orientation[2] = abs(orientation[2])
+    # print('orientation[2]')
+    # print(orientation[2])
     # if orientation[2] < 0:
     #     print('orientation[2] before')
     #     print(orientation[2])

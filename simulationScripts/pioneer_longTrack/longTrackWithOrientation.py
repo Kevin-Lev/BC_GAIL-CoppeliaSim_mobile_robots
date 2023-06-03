@@ -84,7 +84,7 @@ for i in range(qnt_simulacoes):
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
             print(checkInfo)
             
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+            # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
             print('\n')
 
 
@@ -148,7 +148,7 @@ for i in range(qnt_simulacoes):
             orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-            writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
+            # writeSimulationData(fileDirectory, positions, orientation, jointsSpeed, None)
             print('\n')
 
 
@@ -191,7 +191,7 @@ for i in range(qnt_simulacoes):
             orientation = sim.getObjectOrientation(pioneer_handle, -1)
             jointsSpeed = [sim.getJointTargetVelocity(left_motor_handle), sim.getJointTargetVelocity(right_motor_handle)]
 
-            writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
+            # writeSimulationData(fileDirectory, positions, orientation , jointsSpeed, None)
 
     positions = sim.getObjectPosition(pioneer_handle, -1)
     orientation = sim.getObjectOrientation(pioneer_handle, -1)

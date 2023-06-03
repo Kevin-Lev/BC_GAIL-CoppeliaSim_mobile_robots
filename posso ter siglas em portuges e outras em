@@ -1,0 +1,66 @@
+Melhorar e aumentar a Introdução
+
+Melhorar os trabalhos relacionados (colocar mais trabalhos recentes, trabalhos recentes devem ser em maior quantidade do que os outros)
+
+posso ter siglas em portuges e outras em ingles
+
+deixar as variaveis em portugues na lista de abreviaturas e silgas (ex: s - Estado)
+
+trocar AI por IL na lista
+
+figuras que criei diagrama, posso manter em portugues mas deixo a fonte do autor original
+
+aprofundar sobre o gail e colocar um pseudo codigo do algoritmo/fluxo do gail. Citar a Figura 9 (fluxograma do gail)
+
+explicar o que é cada coluna do instrutor do CC e do GAIL, (tabela 5, e 6)
+
+mais um experimento com um cenário diferente de generalização
+
+Verificar se é possível calcular o nível de erro durante o treinamento
+
+Verificar o número de camadas ocultas nos neurônios
+    - se estiver com 64
+        rodar exp com:
+            - 32
+            - 48
+            - 64
+            - 80
+            - 96
+    - fazer com 20 neuronis, dps 40, 64, 80 dps 120 poucos
+
+    - O melhor resultado: dai roda com o numero de iteracoes
+
+        - 1000
+        - 10000
+        - 100000
+
+escrever Resultados no artigo:
+
+- Paragrafo 1: Objetivo dos experimentos
+- Paragrafo 2: Ferramentas
+- Paragrafo 3: Descrever os parâmetros que são fixos para todos os experimentos (PPO, GAIL)
+
+    - Fazer o merge das tabelas 7, 8 e 9
+
+- ignorar no artigo experimentos do circulo sem obstaculos e com obstaculos também
+
+ordem artigo
+intro:
+    - Falar sobre o objetivo aqui
+trabs relacionados
+fundamentação teorica:
+    - GAN (2.2.8)
+    - APrendizado por imit (2.2.9)
+Proposta:
+    - Falar sobre o objetivo aqui novamente. (1 parágrafo talvez)
+    - colar a fig fluxograma geral de desenvolvimento
+    - criar imagem de arquitetura (redes e suas camadas) do CC
+    - criar imagem de arquitetura (redes e suas camadas) do GAIL
+    - - falar dos métricas de avaliação + comparação de trajetorias (citando o fluxograma de desenv.)
+resultados
+- deixar figura 16 d apenas
+- colocar gráfico de metricas de erro
+- colocar comparação de trajetorias
+
+- perguntar pra ines sobre qualis aceita no din e se pode mandar artigo pra evento ou pra revista
+

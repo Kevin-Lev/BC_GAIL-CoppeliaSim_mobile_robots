@@ -74,17 +74,25 @@ for i in range(qnt_simulacoes):
 
     print('pos x atual: ' + str(positions[0]))
     print('pos y atual: ' + str(positions[1]))
-    sleep(2)
+    # sleep(2)
+    i = 0
 
     while float(format(pos_x, ".1f")) != -0.7 or float(format(pos_y, ".1f")) != -0.7:
-        sensor_and_wheel = sim.getStringSignal('sensor_and_wheel')
-        sensor_and_wheel = sim.unpackTable(sensor_and_wheel)
-        light_data, sensor_data, action_data = separateSensorAndAction(sensor_and_wheel[0])
-        positions = sim.getObjectPosition(epuck_handle, -1)
-        pos_x = positions[0]
-        pos_y = positions[1]
-        writeEpuckPosition(fileDirectory_pos, positions)
-        writeEpuckSimData(fileDirectory, light_data, sensor_data, action_data)
+        sleep(0.1)
+        i += 1
+        print('iteração atual: ' + str(i))
+        try:
+            sensor_and_wheel = sim.getStringSignal('sensor_and_wheel')
+            sensor_and_wheel = sim.unpackTable(sensor_and_wheel)
+            light_data, sensor_data, action_data = separateSensorAndAction(sensor_and_wheel[0])
+            positions = sim.getObjectPosition(epuck_handle, -1)
+            pos_x = positions[0]
+            pos_y = positions[1]
+            writeEpuckPosition(fileDirectory_pos, positions)
+            writeEpuckSimData(fileDirectory, light_data, sensor_data, action_data)
+        except:
+            print('Erro! Ainda está aguardando o buffer...')
+
 
     print('PAROU')
 

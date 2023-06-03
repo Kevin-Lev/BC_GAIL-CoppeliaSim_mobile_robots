@@ -4,7 +4,8 @@ import numpy as np
 import os
 
 def removeCharactersFromData(list_data):
-    list_data = list_data.replace('[', '').replace(']', '').replace(' ', '')
+    list_data = list_data.replace('[', '').replace(']', '').replace(' ', '') #ORIGINAL
+    # list_data = list_data.replace('[', '').replace(']', '').replace(' ', ',')
 
     return list_data
 
@@ -36,6 +37,17 @@ def separateSensorAndAction(sensor_data):
             light_list.append(sensor_data[i])
         else:
             sensor_list.append(sensor_data[i])
+    # print(sensor_list)
+    # print(light_list)
+    # print(action_list)
+    # for i in range(len(sensor_data)):
+    #     if i in [9, 10]: # antes era 9,10
+    #         # print(i)
+    #         action_list.append(sensor_data[i])
+    #     elif i == 0:
+    #         light_list.append(sensor_data[i])
+    #     else:
+    #         sensor_list.append(sensor_data[i])
     
     # print('sensor_list')
     # print(sensor_list[0])
@@ -43,6 +55,31 @@ def separateSensorAndAction(sensor_data):
     # print(action_list)
 
     return light_list, sensor_list, action_list
+
+def writeEpuckSimDataOnlyDistance(filename, sensor_data, wheel_data):
+    createDirectories(filename)
+
+    # print('wheel_data ANTES')
+    # print(wheel_data)
+
+    # light_data = removeCharactersFromData(str(light_data))
+    sensor_data = removeCharactersFromData(str(sensor_data))
+    wheel_data = removeCharactersFromData(str(wheel_data))
+
+   
+    # print('sensor_data')
+    # print(sensor_data)
+    # print('wheel_data')
+    # print(wheel_data)
+
+    file = open(filename, 'a+')
+    file.write(str(sensor_data) + '|')
+    file.write(str(wheel_data) + ';')
+
+    file.close()
+
+    return
+
 
 def writeEpuckSimData(filename, light_data, sensor_data, wheel_data):
     createDirectories(filename)
@@ -115,13 +152,76 @@ def writeSimulationData(filename, position_data, orientation_data, wheel_data, s
 
     file.close()
 
+def readEpuckDataImitationOnlyDistance(filename):
+    observations = []
+    actions = []
+    file = open(filename, 'r')
+    simulation_data = file.read()
+    checkpoints = simulation_data.split(';')
+    checkpoints.pop() # Remove string vazia que fica após o último ';'
+    print('len(checkpoints)') 
+    print(len(checkpoints)) 
+
+    for check in checkpoints:
+        tipo = ''
+        obs = []
+        wheels = []
+        splitData = check.split('|')
+
+        if splitData[len(splitData) - 1] == '':
+            splitData.pop()
+
+        # lights = splitData[0]
+        sensors = splitData[0].split(',')
+        wheels = splitData[1]
+
+        # sensors = sensors.split(',')
+        # print('sensors')
+        # print(sensors)
+        # print('wheels')
+        # print(wheels)
+
+        # light_1 = float(lights.split(',')[0])
+        # light_2 = float(lights.split(',')[1])
+        # light_3 = float(lights.split(',')[2])
+        # obs.append(light_1)
+        # obs.append(light_2)
+        # obs.append(light_3)
+
+        # print(len(sensors))
+        for i in range(len(sensors)):
+            sen = float(sensors[i])
+            obs.append(sen)
+
+        l_wheel_speed = float(wheels.split(',')[0])
+        r_wheel_speed = float(wheels.split(',')[1])
+
+        observations.append(obs)
+        actions.append([l_wheel_speed, r_wheel_speed])
+
+        obs = []
+    
+    tipo = 'withSensor'
+    # print('observations')
+    # print(observations)
+    # print('actions')
+    # print(actions)
+    observations.append(observations[len(observations) - 1]) # 28 + 1 no observation
+
+    print('TAMANHO OBSERVATIONS')
+    print(len(observations))
+    return observations, actions, tipo
+
+
 def readEpuckDataImitation(filename):
     observations = []
     actions = []
     file = open(filename, 'r')
     simulation_data = file.read()
     checkpoints = simulation_data.split(';')
-    checkpoints.pop() # Remove string vazia que fica após o último ';' 
+    checkpoints.pop() # Remove string vazia que fica após o último ';'
+    print('len(checkpoints)') 
+    print(len(checkpoints)) 
 
     for check in checkpoints:
         tipo = ''
@@ -172,6 +272,8 @@ def readEpuckDataImitation(filename):
     # print(actions)
     observations.append(observations[len(observations) - 1]) # 28 + 1 no observation
 
+    print('TAMANHO OBSERVATIONS')
+    print(len(observations))
     return observations, actions, tipo
     
 
@@ -268,6 +370,49 @@ def formatObservation(pos_x, pos_y, gamma_angle, sensorData):
 
     return obs_formatted
 
+def readEpuckTrainandTestPos(train_filepath, test_filepath):
+    expected_positions = []
+    model_positions = []
+
+    train_file = open(train_filepath, 'r')
+    test_file = open(test_filepath, 'r')
+    train_data = train_file.read()
+    test_data = test_file.read()
+
+    checkpoints_train_data = train_data.split(';')
+    checkpoints_test_data = test_data.split(';')
+    checkpoints_train_data.pop()
+    checkpoints_test_data.pop()
+
+    print('checkpoints_train_data')
+    print(len(checkpoints_train_data))
+    print('checkpoints_test_data')
+    print(len(checkpoints_test_data))
+
+def readSinglePositions(filepath):
+    read_positions = []
+
+    file = open(filepath, 'r')
+    data = file.read()
+
+    checkpoints_data = data.split(';')
+    checkpoints_data.pop()
+
+    for i in range(len(checkpoints_data)):
+        split_train_data = checkpoints_data[i].split('|')
+        # split_test_data = checkpoints_test_data[i].split('|')
+
+        posx_train = float(split_train_data[0].split(',')[0])
+        posy_train = float(split_train_data[0].split(',')[1])
+
+        read_positions.append([posx_train, posy_train])
+
+    print('read_positions')
+    print(read_positions)
+    print(len(read_positions))
+    return read_positions
+
+
 def readTrainAndTestPositions(train_filepath, test_filepath):
     expected_positions = []
     model_positions = []
@@ -330,9 +475,6 @@ def readTrainAndTestActions(train_filepath, test_filepath):
                 last_valid_action = i - 1
             split_test_data = checkpoints_test_data[last_valid_action].split('|')
 
-        # print(split_train_data[2])
-        # print(split_test_data)
-
         train_jointSpeeds = split_train_data[2]
         test_jointSpeeds = split_test_data[2]
 
@@ -344,11 +486,11 @@ def readTrainAndTestActions(train_filepath, test_filepath):
         expected_actions.append([l_wheel_speed_train, r_wheel_speed_train])
         predicted_actions.append([l_wheel_speed_test ,r_wheel_speed_test])
 
-    # print("Expected actions:")
-    # print(expected_actions)
+    print("Expected actions:")
+    print(expected_actions)
 
-    # print("predicted_actions")
-    # print(predicted_actions)
+    print("predicted_actions")
+    print(predicted_actions)
 
     return expected_actions, predicted_actions
 

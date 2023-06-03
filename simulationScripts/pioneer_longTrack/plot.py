@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 sys.path.append('/home/kevin-lev/Área de Trabalho/Mestrado/projeto_e_anotacoes/BC_GAIL-CoppeliaSim_mobile_robots')
-from simulationScripts.file import readTrainAndTestActions, readTrainAndTestPositions
-from simulationScripts.meanSquareError import calculate_loss, mean_loss_simulations, mean_squared_error
+from simulationScripts.file import readTrainAndTestActions, readTrainAndTestPositions, readEpuckTrainandTestPos
+from simulationScripts.meanSquareError import calculate_mse, mean_loss_simulations, mean_squared_error
 
 
 def plotIdealAndModelPaths(ideal_path, first_model_path, second_model_path):
@@ -163,3 +163,6 @@ elif sys.argv[4] == '2':
     plotIdealAndMeanModelPaths(sys.argv[1], sys.argv[2], sys.argv[3])
 else:
     plotMeanLoss(sys.argv[1], sys.argv[2])
+
+# if sys.argv[3] == '1':
+#     readEpuckTrainandTestPos(sys.argv[1], sys.argv[2])
